@@ -1,0 +1,13 @@
+<launch>
+  <include file="$(find anno_config)/launch/planning_context.launch">
+    <arg name="load_robot_description" value="true"/>
+  </include>
+
+  <node name="anno_test"
+        pkg="moveit_tutorials"
+        type="anno_test"
+        respawn="false" output="screen">
+    <rosparam command="load"
+              file="$(find anno_config)/config/kinematics.yaml"/>
+  </node>
+</launch>

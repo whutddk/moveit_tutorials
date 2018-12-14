@@ -4,7 +4,7 @@
   <arg unless="$(arg debug)" name="launch_prefix" value="" />
   <arg     if="$(arg debug)" name="launch_prefix" value="gdb --ex run --args" />
 
-  <include file="$(find panda_moveit_config)/launch/planning_context.launch">
+  <include file="$(find anno_config)/launch/planning_context.launch">
     <arg name="load_robot_description" value="true"/>
   </include>
 
@@ -16,13 +16,13 @@
 
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen" />
 
-  <include file="$(find panda_moveit_config)/launch/moveit_rviz.launch">
+  <include file="$(find anno_config)/launch/moveit_rviz.launch">
   </include>
 
   <node name="motion_planning_api_tutorial" pkg="moveit_tutorials" type="motion_planning_api_tutorial" respawn="false" launch-prefix="$(arg launch_prefix)" output="screen">
-    <rosparam command="load" file="$(find panda_moveit_config)/config/kinematics.yaml"/>
+    <rosparam command="load" file="$(find anno_config)/config/kinematics.yaml"/>
     <param name="/planning_plugin" value="ompl_interface/OMPLPlanner"/>
-    <rosparam command="load" file="$(find panda_moveit_config)/config/ompl_planning.yaml"/>
+    <rosparam command="load" file="$(find anno_config)/config/ompl_planning.yaml"/>
   </node>
 
 

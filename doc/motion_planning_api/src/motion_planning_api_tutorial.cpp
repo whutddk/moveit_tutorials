@@ -69,7 +69,7 @@ int main(int argc, char** argv)
   //
   // .. _RobotModelLoader:
   //     http://docs.ros.org/indigo/api/moveit_ros_planning/html/classrobot__model__loader_1_1RobotModelLoader.html
-  const std::string PLANNING_GROUP = "panda_arm";
+  const std::string PLANNING_GROUP = "anno_arm";
   robot_model_loader::RobotModelLoader robot_model_loader("robot_description");
   robot_model::RobotModelPtr robot_model = robot_model_loader.getModel();
   /* Create a RobotState and JointModelGroup to keep track of the current robot pose and planning group*/
@@ -123,7 +123,7 @@ int main(int argc, char** argv)
   // The package MoveItVisualTools provides many capabilties for visualizing objects, robots,
   // and trajectories in RViz as well as debugging tools such as step-by-step introspection of a script
   namespace rvt = rviz_visual_tools;
-  moveit_visual_tools::MoveItVisualTools visual_tools("panda_link0");
+  moveit_visual_tools::MoveItVisualTools visual_tools("link0");
   visual_tools.deleteAllMarkers();
 
   /* Remote control is an introspection tool that allows users to step through a high level script
@@ -152,7 +152,7 @@ int main(int argc, char** argv)
   planning_interface::MotionPlanRequest req;
   planning_interface::MotionPlanResponse res;
   geometry_msgs::PoseStamped pose;
-  pose.header.frame_id = "panda_link0";
+  pose.header.frame_id = "link0";
   pose.pose.position.x = 0.3;
   pose.pose.position.y = 0.0;
   pose.pose.position.z = 0.75;
@@ -170,9 +170,9 @@ int main(int argc, char** argv)
   //
   // .. _kinematic_constraints:
   //     http://docs.ros.org/indigo/api/moveit_core/html/namespacekinematic__constraints.html#a88becba14be9ced36fefc7980271e132
-  req.group_name = "panda_arm";
+  req.group_name = "anno_arm";
   moveit_msgs::Constraints pose_goal =
-      kinematic_constraints::constructGoalConstraints("panda_link8", pose, tolerance_pose, tolerance_angle);
+      kinematic_constraints::constructGoalConstraints("tool0", pose, tolerance_pose, tolerance_angle);
   req.goal_constraints.push_back(pose_goal);
 
   // We now construct a planning context that encapsulate the scene,
@@ -268,7 +268,7 @@ int main(int argc, char** argv)
   pose.pose.position.z = 0.65;
   pose.pose.orientation.w = 1.0;
   moveit_msgs::Constraints pose_goal_2 =
-      kinematic_constraints::constructGoalConstraints("panda_link8", pose, tolerance_pose, tolerance_angle);
+      kinematic_constraints::constructGoalConstraints("tool0", pose, tolerance_pose, tolerance_angle);
   /* First, set the state in the planning scene to the final state of the last plan */
   robot_state->setJointGroupPositions(joint_model_group, response.trajectory.joint_trajectory.points.back().positions);
   /* Now, let's try to move to this new pose goal*/
@@ -278,9 +278,9 @@ int main(int argc, char** argv)
   /* But, let's impose a path constraint on the motion.
      Here, we are asking for the end-effector to stay level*/
   geometry_msgs::QuaternionStamped quaternion;
-  quaternion.header.frame_id = "panda_link0";
+  quaternion.header.frame_id = "link0";
   quaternion.quaternion.w = 1.0;
-  req.path_constraints = kinematic_constraints::constructGoalConstraints("panda_link8", quaternion);
+  req.path_constraints = kinematic_constraints::constructGoalConstraints("tool0", quaternion);
 
   // Imposing path constraints requires the planner to reason in the space of possible positions of the end-effector
   // (the workspace of the robot)
