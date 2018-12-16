@@ -70,32 +70,35 @@ int main(int argc, char** argv)
 	// ^^^^^^^^^^^^^^^^^^^^^^^
 	// We can plan a motion for this group to a desired pose for the
 	// end-effector.
-	geometry_msgs::Pose target_pose1;
-	target_pose1.orientation.w = 1.0;
-	target_pose1.position.x = 0.28;
-	target_pose1.position.y = -0.2;
-	target_pose1.position.z = 0.5;
-	move_group.setPoseTarget(target_pose1);
+		moveit::planning_interface::MoveGroupInterface::Plan my_plan;
+		bool success;
+		{/*
+			geometry_msgs::Pose target_pose1;
+			target_pose1.orientation.w = 1.0;
+			target_pose1.position.x = 0.28;
+			target_pose1.position.y = 0.2;
+			target_pose1.position.z = 0.5;
+			move_group.setPoseTarget(target_pose1);
+	
+			// Now, we call the planner to compute the plan and visualize it.
+			// Note that we are just planning, not asking move_group
+			// to actually move the robot.
 
-	// Now, we call the planner to compute the plan and visualize it.
-	// Note that we are just planning, not asking move_group
-	// to actually move the robot.
-	moveit::planning_interface::MoveGroupInterface::Plan my_plan;
-
-	bool success = (move_group.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
-
-	ROS_INFO_NAMED("tutorial", "Visualizing plan 1 (pose goal) %s", success ? "" : "FAILED");
-
-	// Visualizing plans
-	// ^^^^^^^^^^^^^^^^^
-	// We can also visualize the plan as a line with markers in RViz.
-	ROS_INFO_NAMED("tutorial", "Visualizing plan 1 as trajectory line");
-	visual_tools.publishAxisLabeled(target_pose1, "pose1");
-	visual_tools.publishText(text_pose, "Pose Goal", rvt::WHITE, rvt::XLARGE);
-	visual_tools.publishTrajectoryLine(my_plan.trajectory_, joint_model_group);
-	visual_tools.trigger();
-	visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue the demo");
-
+	
+			success = (move_group.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+	
+			ROS_INFO_NAMED("tutorial", "Visualizing plan 1 (pose goal) %s", success ? "" : "FAILED");
+	
+			// Visualizing plans
+			// ^^^^^^^^^^^^^^^^^
+			// We can also visualize the plan as a line with markers in RViz.
+			ROS_INFO_NAMED("tutorial", "Visualizing plan 1 as trajectory line");
+			visual_tools.publishAxisLabeled(target_pose1, "pose1");
+			visual_tools.publishText(text_pose, "Pose Goal", rvt::WHITE, rvt::XLARGE);
+			visual_tools.publishTrajectoryLine(my_plan.trajectory_, joint_model_group);
+			visual_tools.trigger();
+			visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue the demo");
+		*/}
   // // Moving to a pose goal
   // // ^^^^^^^^^^^^^^^^^^^^^
   // //
@@ -110,33 +113,38 @@ int main(int argc, char** argv)
   // /* Uncomment below line when working with a real robot */
   // /* move_group.move(); */
 
-  // // Planning to a joint-space goal
-  // // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  // //
-  // // Let's set a joint space goal and move towards it.  This will replace the
-  // // pose target we set above.
-  // //
-  // // To start, we'll create an pointer that references the current robot's state.
-  // // RobotState is the object that contains all the current position/velocity/acceleration data.
-  // moveit::core::RobotStatePtr current_state = move_group.getCurrentState();
-  // //
-  // // Next get the current set of joint values for the group.
-  // std::vector<double> joint_group_positions;
-  // current_state->copyJointGroupPositions(joint_model_group, joint_group_positions);
+  // Planning to a joint-space goal
+  // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  //
+  // Let's set a joint space goal and move towards it.  This will replace the
+  // pose target we set above.
+  //
+  // To start, we'll create an pointer that references the current robot's state.
+  // RobotState is the object that contains all the current position/velocity/acceleration data.
+  moveit::core::RobotStatePtr current_state = move_group.getCurrentState();
+  //
+  // Next get the current set of joint values for the group.
+  std::vector<double> joint_group_positions;
+  current_state->copyJointGroupPositions(joint_model_group, joint_group_positions);
 
-  // // Now, let's modify one of the joints, plan to the new joint space goal and visualize the plan.
-  // joint_group_positions[0] = -1.0;  // radians
-  // move_group.setJointValueTarget(joint_group_positions);
+  // Now, let's modify one of the joints, plan to the new joint space goal and visualize the plan.
+  joint_group_positions[0] = 1.57;  // radians
+  joint_group_positions[1] = -1.57;
+  joint_group_positions[2] = 0;
+  joint_group_positions[3] = 0;
+  joint_group_positions[4] = 1.50;
+  joint_group_positions[5] = 0;
+  move_group.setJointValueTarget(joint_group_positions);
 
-  // success = (move_group.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
-  // ROS_INFO_NAMED("tutorial", "Visualizing plan 2 (joint space goal) %s", success ? "" : "FAILED");
+  success = (move_group.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+  ROS_INFO_NAMED("tutorial", "Visualizing plan 2 (joint space goal) %s", success ? "" : "FAILED");
 
-  // // Visualize the plan in RViz
-  // visual_tools.deleteAllMarkers();
-  // visual_tools.publishText(text_pose, "Joint Space Goal", rvt::WHITE, rvt::XLARGE);
-  // visual_tools.publishTrajectoryLine(my_plan.trajectory_, joint_model_group);
-  // visual_tools.trigger();
-  // visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue the demo");
+  // Visualize the plan in RViz
+  visual_tools.deleteAllMarkers();
+  visual_tools.publishText(text_pose, "Joint Space Goal", rvt::WHITE, rvt::XLARGE);
+  visual_tools.publishTrajectoryLine(my_plan.trajectory_, joint_model_group);
+  visual_tools.trigger();
+  visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue the demo");
 
   // // Planning with Path Constraints
   // // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
