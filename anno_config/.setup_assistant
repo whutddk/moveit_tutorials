@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: probot_description
+    relative_path: urdf/probot_6axis.xacro
+    xacro_args: "--inorder "
+  SRDF:
+    relative_path: config/probot_6axis.srdf
+  CONFIG:
+    author_name: ddk
+    author_email: 295054118@whut.edu.cn
+    generated_timestamp: 1544863554
