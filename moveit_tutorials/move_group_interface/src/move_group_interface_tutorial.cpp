@@ -72,6 +72,47 @@ int main(int argc, char** argv)
 	// end-effector.
 	moveit::planning_interface::MoveGroupInterface::Plan my_plan;
 	bool success;
+
+
+
+// 创建运动规划的情景，等待创建完成
+
+    moveit::planning_interface::PlanningSceneInterface current_scene;
+    sleep(5.0);
+    // 声明一个障碍物的实例，并且为其设置一个id，方便对其进行操作，该实例会发布到当前的情景实例中
+    moveit_msgs::CollisionObject cylinder;
+    cylinder.id = "arm_cylinder";
+    // 设置障碍物的外形、尺寸等属性   
+    shape_msgs::SolidPrimitive primitive;
+    primitive.type = primitive.CYLINDER;
+    primitive.dimensions.resize(3);
+    primitive.dimensions[0] = 0.6;
+    primitive.dimensions[1] = 0.2;
+    // 设置障碍物的位置
+    geometry_msgs::Pose pose;
+    pose.orientation.w = 1.0;
+    pose.position.x =  0.0;
+    pose.position.y = -0.4;
+    pose.position.z =  0.4;
+    // 将障碍物的属性、位置加入到障碍物的实例中
+    cylinder.primitives.push_back(primitive);
+    cylinder.primitive_poses.push_back(pose);
+    cylinder.operation = cylinder.ADD;
+    // 创建一个障碍物的列表，把之前创建的障碍物实例加入其中
+    std::vector<moveit_msgs::CollisionObject> collision_objects;
+    collision_objects.push_back(cylinder);
+    // 所有障碍物加入列表后（这里只有一个障碍物），再把障碍物加入到当前的情景中，如果要删除障碍物，使用removeCollisionObjects(collision_objects)
+    current_scene.addCollisionObjects(collision_objects);
+
+
+
+
+
+
+
+
+
+
 	{/*
 		geometry_msgs::Pose target_pose1;
 		target_pose1.orientation.w = 1.0;
@@ -238,45 +279,47 @@ int main(int argc, char** argv)
   // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   //
   // Define a collision object ROS message.
-	moveit_msgs::CollisionObject collision_object;
-	collision_object.header.frame_id = move_group.getPlanningFrame();
-
-	// The id of the object is used to identify it.
-	collision_object.id = "box1";
-
-	// Define a box to add to the world.
-	shape_msgs::SolidPrimitive primitive;
-	primitive.type = primitive.BOX;
-	primitive.dimensions.resize(3);
-	primitive.dimensions[0] = 0.4;
-	primitive.dimensions[1] = 0.1;
-	primitive.dimensions[2] = 0.4;
-
-	// Define a pose for the box (specified relative to frame_id)
-	geometry_msgs::Pose box_pose;
-	box_pose.orientation.w = 1.0;
-	box_pose.position.x = 0.3;
-	box_pose.position.y = 0.2;
-	box_pose.position.z = 0.5;
-
-	collision_object.primitives.push_back(primitive);
-	collision_object.primitive_poses.push_back(box_pose);
-	collision_object.operation = collision_object.ADD;
-
-	std::vector<moveit_msgs::CollisionObject> collision_objects;
-	collision_objects.push_back(collision_object);
-
-	// Now, let's add the collision object into the world
-	ROS_INFO_NAMED("tutorial", "Add an object into the world");
-	planning_scene_interface.addCollisionObjects(collision_objects);
-
-	// Show text in RViz of status
-	visual_tools.publishText(text_pose, "Add object", rvt::WHITE, rvt::XLARGE);
-	visual_tools.trigger();
-
-	// Wait for MoveGroup to recieve and process the collision object message
-	visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to once the collision object appears in RViz");
-
+	{/*
+		moveit_msgs::CollisionObject collision_object;
+		collision_object.header.frame_id = move_group.getPlanningFrame();
+	
+		// The id of the object is used to identify it.
+		collision_object.id = "box1";
+	
+		// Define a box to add to the world.
+		shape_msgs::SolidPrimitive primitive;
+		primitive.type = primitive.BOX;
+		primitive.dimensions.resize(3);
+		primitive.dimensions[0] = 0.4;
+		primitive.dimensions[1] = 0.1;
+		primitive.dimensions[2] = 0.4;
+	
+		// Define a pose for the box (specified relative to frame_id)
+		geometry_msgs::Pose box_pose;
+		box_pose.orientation.w = 1.0;
+		box_pose.position.x = 0.3;
+		box_pose.position.y = 0.2;
+		box_pose.position.z = 0.5;
+	
+		collision_object.primitives.push_back(primitive);
+		collision_object.primitive_poses.push_back(box_pose);
+		collision_object.operation = collision_object.ADD;
+	
+		std::vector<moveit_msgs::CollisionObject> collision_objects;
+		collision_objects.push_back(collision_object);
+	
+		// Now, let's add the collision object into the world
+		ROS_INFO_NAMED("tutorial", "Add an object into the world");
+		planning_scene_interface.addCollisionObjects(collision_objects);
+	
+		// Show text in RViz of status
+		visual_tools.publishText(text_pose, "Add object", rvt::WHITE, rvt::XLARGE);
+		visual_tools.trigger();
+	
+		// Wait for MoveGroup to recieve and process the collision object message
+		visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to once the collision object appears in RViz");
+	*/
+	}
   // // Now when we plan a trajectory it will avoid the obstacle
   // move_group.setStartState(*move_group.getCurrentState());
   // geometry_msgs::Pose another_pose;
