@@ -30,7 +30,7 @@ int main(int argc, char** argv)
 
 	// Raw pointers are frequently used to refer to the planning group for improved performance.
 	const robot_state::JointModelGroup* joint_model_group =
-	  move_group.getCurrentState()->getJointModelGroup(PLANNING_GROUP);
+	move_group.getCurrentState()->getJointModelGroup(PLANNING_GROUP);
 
 	// Visualization
 	// ^^^^^^^^^^^^^
@@ -255,7 +255,7 @@ int main(int argc, char** argv)
 	// Define a pose for the box (specified relative to frame_id)
 	geometry_msgs::Pose box_pose;
 	box_pose.orientation.w = 1.0;
-	box_pose.position.x = 0.4;
+	box_pose.position.x = 0.3;
 	box_pose.position.y = 0.2;
 	box_pose.position.z = 0.5;
 
