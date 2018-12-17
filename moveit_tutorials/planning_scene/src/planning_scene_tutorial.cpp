@@ -51,14 +51,14 @@
 // the Panda robot is at a positive or negative angle:
 bool stateFeasibilityTestExample(const robot_state::RobotState& kinematic_state, bool verbose)
 {
-  const double* joint_values = kinematic_state.getJointPositions("panda_joint1");
+  const double* joint_values = kinematic_state.getJointPositions("joint_1");
   return (joint_values[0] > 0.0);
 }
 // END_SUB_TUTORIAL
 
 int main(int argc, char** argv)
 {
-  ros::init(argc, argv, "panda_arm_kinematics");
+  ros::init(argc, argv, "anno_arm_kinematics");
   ros::AsyncSpinner spinner(1);
   spinner.start();
   std::size_t count = 0;
@@ -129,7 +129,7 @@ int main(int argc, char** argv)
   // for this specifically by adding the group name "hand" to the
   // collision request.
 
-  collision_request.group_name = "hand";
+  collision_request.group_name = "anno_arm";
   current_state.setToRandomPositions();
   collision_result.clear();
   planning_scene.checkSelfCollision(collision_request, collision_result);
@@ -144,7 +144,7 @@ int main(int argc, char** argv)
   // check for directly.
 
   std::vector<double> joint_values = { 0.0, 0.0, 0.0, -2.9, 0.0, 1.4, 0.0 };
-  const robot_model::JointModelGroup* joint_model_group = current_state.getJointModelGroup("panda_arm");
+  const robot_model::JointModelGroup* joint_model_group = current_state.getJointModelGroup("anno_arm");
   current_state.setJointGroupPositions(joint_model_group, joint_values);
   ROS_INFO_STREAM("Test 4: Current state is "
                   << (current_state.satisfiesBounds(joint_model_group) ? "valid" : "not valid"));
@@ -242,7 +242,7 @@ int main(int argc, char** argv)
   desired_pose.pose.position.x = 0.3;
   desired_pose.pose.position.y = -0.185;
   desired_pose.pose.position.z = 0.5;
-  desired_pose.header.frame_id = "panda_link0";
+  desired_pose.header.frame_id = "base_link";
   moveit_msgs::Constraints goal_constraint =
       kinematic_constraints::constructGoalConstraints(end_effector_name, desired_pose);
 
@@ -289,7 +289,7 @@ int main(int argc, char** argv)
   // collision checking (b) constraint checking and (c) feasibility
   // checking using the user-defined callback.
 
-  bool state_valid = planning_scene.isStateValid(copied_state, kinematic_constraint_set, "panda_arm");
+  bool state_valid = planning_scene.isStateValid(copied_state, kinematic_constraint_set, "anno_arm");
   ROS_INFO_STREAM("Test 12: Random state is " << (state_valid ? "valid" : "not valid"));
 
   // Note that all the planners available through MoveIt! and OMPL will

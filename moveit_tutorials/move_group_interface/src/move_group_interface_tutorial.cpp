@@ -70,35 +70,35 @@ int main(int argc, char** argv)
 	// ^^^^^^^^^^^^^^^^^^^^^^^
 	// We can plan a motion for this group to a desired pose for the
 	// end-effector.
-		moveit::planning_interface::MoveGroupInterface::Plan my_plan;
-		bool success;
-		{/*
-			geometry_msgs::Pose target_pose1;
-			target_pose1.orientation.w = 1.0;
-			target_pose1.position.x = 0.28;
-			target_pose1.position.y = 0.2;
-			target_pose1.position.z = 0.5;
-			move_group.setPoseTarget(target_pose1);
-	
-			// Now, we call the planner to compute the plan and visualize it.
-			// Note that we are just planning, not asking move_group
-			// to actually move the robot.
+	moveit::planning_interface::MoveGroupInterface::Plan my_plan;
+	bool success;
+	{/*
+		geometry_msgs::Pose target_pose1;
+		target_pose1.orientation.w = 1.0;
+		target_pose1.position.x = 0.28;
+		target_pose1.position.y = 0.2;
+		target_pose1.position.z = 0.5;
+		move_group.setPoseTarget(target_pose1);
 
-	
-			success = (move_group.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
-	
-			ROS_INFO_NAMED("tutorial", "Visualizing plan 1 (pose goal) %s", success ? "" : "FAILED");
-	
-			// Visualizing plans
-			// ^^^^^^^^^^^^^^^^^
-			// We can also visualize the plan as a line with markers in RViz.
-			ROS_INFO_NAMED("tutorial", "Visualizing plan 1 as trajectory line");
-			visual_tools.publishAxisLabeled(target_pose1, "pose1");
-			visual_tools.publishText(text_pose, "Pose Goal", rvt::WHITE, rvt::XLARGE);
-			visual_tools.publishTrajectoryLine(my_plan.trajectory_, joint_model_group);
-			visual_tools.trigger();
-			visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue the demo");
-		*/}
+		// Now, we call the planner to compute the plan and visualize it.
+		// Note that we are just planning, not asking move_group
+		// to actually move the robot.
+
+
+		success = (move_group.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+
+		ROS_INFO_NAMED("tutorial", "Visualizing plan 1 (pose goal) %s", success ? "" : "FAILED");
+
+		// Visualizing plans
+		// ^^^^^^^^^^^^^^^^^
+		// We can also visualize the plan as a line with markers in RViz.
+		ROS_INFO_NAMED("tutorial", "Visualizing plan 1 as trajectory line");
+		visual_tools.publishAxisLabeled(target_pose1, "pose1");
+		visual_tools.publishText(text_pose, "Pose Goal", rvt::WHITE, rvt::XLARGE);
+		visual_tools.publishTrajectoryLine(my_plan.trajectory_, joint_model_group);
+		visual_tools.trigger();
+		visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue the demo");
+	*/}
   
 	{/*
 		moveit::core::RobotStatePtr current_state = move_group.getCurrentState();
