@@ -77,7 +77,13 @@ class MoveGroupPythonIntefaceTutorial(object):
 
 		# The go command can be called with joint values, poses, or without any
 		# parameters if you have already set the pose or joint target for the group
-		group.go(joint_goal, wait=True)
+		
+		plan = group.plan(joint_goal)
+
+		self.add_box()
+
+		group.execute(plan, wait=True)
+		# group.go(joint_goal, wait=True)
 
 		# Calling ``stop()`` ensures that there is no residual movement
 		group.stop()
@@ -159,12 +165,12 @@ class MoveGroupPythonIntefaceTutorial(object):
 		box_pose.header.frame_id = "base_footprint"
 		box_pose.pose.orientation.w = 1.0
 
-		box_pose.pose.position.x = 0.26
-		box_pose.pose.position.y = 0.0
-		box_pose.pose.position.z = 0.5
+		box_pose.pose.position.x = 0.3
+		box_pose.pose.position.y = 0.3
+		box_pose.pose.position.z = 0.2
 
 		box_name = "box-0-0-0"
-		scene.add_box(box_name, box_pose, size=(0.1, 0.1, 0.1))
+		scene.add_box(box_name, box_pose, size=(0.1, 0.5, 0.5))
 
 		## END_SUB_TUTORIAL
 		# Copy local variables back to class variables. In practice, you should use the class
@@ -203,14 +209,14 @@ def main():
 		raw_input()
 		tutorial.go_to_joint_state(0,0,0,0,0,0)
 
+		# print "============ Press `Enter` to add a box to the planning scene ..."
+		# raw_input()
+		# tutorial.add_box()
+
 		print "============ Press `Enter` to execute a movement using a joint state goal ..."
 		raw_input()
+		tutorial.remove_box()
 		tutorial.go_to_joint_state(pi/2,-pi/2,0,0,pi/2,0)
-
-
-		print "============ Press `Enter` to add a box to the planning scene ..."
-		raw_input()
-		tutorial.add_box()
 
 		print "============ Press `Enter` to remove the box from the planning scene ..."
 		raw_input()
