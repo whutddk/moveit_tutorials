@@ -64,16 +64,16 @@ class MoveGroupPythonIntefaceTutorial(object):
 		self.eef_link = eef_link
 		self.group_names = group_names
 
-	def go_to_joint_state(self):
+	def go_to_joint_state(self,axis0,axis1,axis2,axis3,axis4,axis5):
 		group = self.group
 		joint_goal = group.get_current_joint_values()
 
-		joint_goal[0] = pi/2
-		joint_goal[1] = -pi/2
-		joint_goal[2] = 0
-		joint_goal[3] = 0
-		joint_goal[4] = pi/2
-		joint_goal[5] = 0
+		joint_goal[0] = axis0
+		joint_goal[1] = axis1
+		joint_goal[2] = axis2
+		joint_goal[3] = axis3
+		joint_goal[4] = axis4
+		joint_goal[5] = axis5
 
 		# The go command can be called with joint values, poses, or without any
 		# parameters if you have already set the pose or joint target for the group
@@ -156,9 +156,14 @@ class MoveGroupPythonIntefaceTutorial(object):
 		## ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 		## First, we will create a box in the planning scene at the location of the left finger:
 		box_pose = geometry_msgs.msg.PoseStamped()
-		box_pose.header.frame_id = "tool0"
+		box_pose.header.frame_id = "base_footprint"
 		box_pose.pose.orientation.w = 1.0
-		box_name = "box"
+
+		box_pose.pose.position.x = 0.26
+		box_pose.pose.position.y = 0.0
+		box_pose.pose.position.z = 0.5
+
+		box_name = "box-0-0-0"
 		scene.add_box(box_name, box_pose, size=(0.1, 0.1, 0.1))
 
 		## END_SUB_TUTORIAL
@@ -196,15 +201,20 @@ def main():
 
 		print "============ Press `Enter` to execute a movement using a joint state goal ..."
 		raw_input()
-		tutorial.go_to_joint_state()
+		tutorial.go_to_joint_state(0,0,0,0,0,0)
 
-		# print "============ Press `Enter` to add a box to the planning scene ..."
-		# raw_input()
-		# tutorial.add_box()
+		print "============ Press `Enter` to execute a movement using a joint state goal ..."
+		raw_input()
+		tutorial.go_to_joint_state(pi/2,-pi/2,0,0,pi/2,0)
 
-		# print "============ Press `Enter` to remove the box from the planning scene ..."
-		# raw_input()
-		# tutorial.remove_box()
+
+		print "============ Press `Enter` to add a box to the planning scene ..."
+		raw_input()
+		tutorial.add_box()
+
+		print "============ Press `Enter` to remove the box from the planning scene ..."
+		raw_input()
+		tutorial.remove_box()
 
 		print "============ Python tutorial demo complete!"
 	except rospy.ROSInterruptException:
@@ -214,6 +224,9 @@ def main():
 
 if __name__ == '__main__':
 	main()
+
+
+
 
 
 
