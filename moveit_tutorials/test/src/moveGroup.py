@@ -10,6 +10,8 @@ from math import pi
 from std_msgs.msg import String
 from moveit_commander.conversions import pose_to_list
 
+import moveit_python
+
 def all_close(goal, actual, tolerance):
 	"""
 	Convenience method for testing if a list of values are within a tolerance of their counterparts in another list
@@ -80,7 +82,7 @@ class MoveGroupPythonIntefaceTutorial(object):
 		
 		plan = group.plan(joint_goal)
 
-		self.add_box()
+		
 
 		group.execute(plan, wait=True)
 		# group.go(joint_goal, wait=True)
@@ -166,11 +168,11 @@ class MoveGroupPythonIntefaceTutorial(object):
 		box_pose.pose.orientation.w = 1.0
 
 		box_pose.pose.position.x = 0.3
-		box_pose.pose.position.y = 0.3
-		box_pose.pose.position.z = 0.2
+		box_pose.pose.position.y = 0
+		box_pose.pose.position.z = 0.3
 
 		box_name = "box-0-0-0"
-		scene.add_box(box_name, box_pose, size=(0.1, 0.5, 0.5))
+		scene.add_box(box_name, box_pose, size=(0.5, 0.5, 0.5))
 
 		## END_SUB_TUTORIAL
 		# Copy local variables back to class variables. In practice, you should use the class
@@ -198,6 +200,12 @@ class MoveGroupPythonIntefaceTutorial(object):
 		# We wait for the planning scene to update.
 		return self.wait_for_state_update(box_is_attached=False, box_is_known=False, timeout=timeout)
 
+	def collision_detect(self):
+		scene = self.scene
+		collisionObj = scene.get_attached_objects()
+		print "collisionObj:"
+		print collisionObj
+
 
 def main():
 	try:
@@ -207,10 +215,16 @@ def main():
 
 		print "============ Press `Enter` to execute a movement using a joint state goal ..."
 		raw_input()
+		tutorial.add_box()
+		tutorial.collision_detect()
+
+		print "============ Press `Enter` to execute a movement using a joint state goal ..."
+		raw_input()
 		tutorial.go_to_joint_state(0,0,0,0,0,0)
 
-		# print "============ Press `Enter` to add a box to the planning scene ..."
-		# raw_input()
+		print "============ Press `Enter` to add a box to the planning scene ..."
+		raw_input()
+		
 		# tutorial.add_box()
 
 		print "============ Press `Enter` to execute a movement using a joint state goal ..."
