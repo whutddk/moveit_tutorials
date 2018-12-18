@@ -42,7 +42,8 @@ class MoveGroupPythonIntefaceTutorial(object):
 		rospy.init_node('move_group_python_interface_tutorial',
 						anonymous=True)
 		robot = moveit_commander.RobotCommander()
-		scene = moveit_commander.PlanningSceneInterface()
+		# scene = moveit_commander.PlanningSceneInterface()
+		scene = moveit_python.planning_scene_interface.PlanningSceneInterface("base_link")
 		group_name = "anno_arm"
 		group = moveit_commander.MoveGroupCommander(group_name)
 		display_trajectory_publisher = rospy.Publisher('/move_group/display_planned_path',
@@ -110,46 +111,47 @@ class MoveGroupPythonIntefaceTutorial(object):
 		# current_pose = self.group.get_current_pose().pose
 		# return all_close(pose_goal, current_pose, 0.01)
 
-	def wait_for_state_update(self, box_is_known=False, box_is_attached=False, timeout=4):
-		# Copy class variables to local variables to make the web tutorials more clear.
-		# In practice, you should use the class variables directly unless you have a good
-		# reason not to.
-		box_name = self.box_name
-		scene = self.scene
+	# def wait_for_state_update(self, box_is_known=False, box_is_attached=False, timeout=4):
+	# 	# Copy class variables to local variables to make the web tutorials more clear.
+	# 	# In practice, you should use the class variables directly unless you have a good
+	# 	# reason not to.
+	# 	box_name = self.box_name
+	# 	scene = self.scene
 
-		## BEGIN_SUB_TUTORIAL wait_for_scene_update
-		##
-		## Ensuring Collision Updates Are Receieved
-		## ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-		## If the Python node dies before publishing a collision object update message, the message
-		## could get lost and the box will not appear. To ensure that the updates are
-		## made, we wait until we see the changes reflected in the
-		## ``get_known_object_names()`` and ``get_known_object_names()`` lists.
-		## For the purpose of this tutorial, we call this function after adding,
-		## removing, attaching or detaching an object in the planning scene. We then wait
-		## until the updates have been made or ``timeout`` seconds have passed
-		start = rospy.get_time()
-		seconds = rospy.get_time()
-		while (seconds - start < timeout) and not rospy.is_shutdown():
-			# Test if the box is in attached objects
-			attached_objects = scene.get_attached_objects([box_name])
-			is_attached = len(attached_objects.keys()) > 0
+	# 	## BEGIN_SUB_TUTORIAL wait_for_scene_update
+	# 	##
+	# 	## Ensuring Collision Updates Are Receieved
+	# 	## ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+	# 	## If the Python node dies before publishing a collision object update message, the message
+	# 	## could get lost and the box will not appear. To ensure that the updates are
+	# 	## made, we wait until we see the changes reflected in the
+	# 	## ``get_known_object_names()`` and ``get_known_object_names()`` lists.
+	# 	## For the purpose of this tutorial, we call this function after adding,
+	# 	## removing, attaching or detaching an object in the planning scene. We then wait
+	# 	## until the updates have been made or ``timeout`` seconds have passed
+	# 	start = rospy.get_time()
+	# 	seconds = rospy.get_time()
+	# 	while (seconds - start < timeout) and not rospy.is_shutdown():
+	# 		# Test if the box is in attached objects
+	# 		# attached_objects = scene.get_attached_objects([box_name])
+	# 		attached_objects = scene.getKnowAttachedObjects([box_name])
+	# 		is_attached = len(attached_objects.keys()) > 0
 
-			# Test if the box is in the scene.
-			# Note that attaching the box will remove it from known_objects
-			is_known = box_name in scene.get_known_object_names()
+	# 		# Test if the box is in the scene.
+	# 		# Note that attaching the box will remove it from known_objects
+	# 		is_known = box_name in scene.get_known_object_names()
 
-			# Test if we are in the expected state
-			if (box_is_attached == is_attached) and (box_is_known == is_known):
-				return True
+	# 		# Test if we are in the expected state
+	# 		if (box_is_attached == is_attached) and (box_is_known == is_known):
+	# 			return True
 
-			# Sleep so that we give other threads time on the processor
-			rospy.sleep(0.1)
-			seconds = rospy.get_time()
+	# 		# Sleep so that we give other threads time on the processor
+	# 		rospy.sleep(0.1)
+	# 		seconds = rospy.get_time()
 
-		# If we exited the while loop without returning then we timed out
-		return False
-		## END_SUB_TUTORIAL
+	# 	# If we exited the while loop without returning then we timed out
+	# 	return False
+	# 	## END_SUB_TUTORIAL
 
 	def add_box(self, timeout=4):
 		# Copy class variables to local variables to make the web tutorials more clear.
@@ -163,22 +165,22 @@ class MoveGroupPythonIntefaceTutorial(object):
 		## Adding Objects to the Planning Scene
 		## ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 		## First, we will create a box in the planning scene at the location of the left finger:
-		box_pose = geometry_msgs.msg.PoseStamped()
-		box_pose.header.frame_id = "base_footprint"
-		box_pose.pose.orientation.w = 1.0
+		# box_pose = geometry_msgs.msg.PoseStamped()
+		# box_pose.header.frame_id = "base_footprint"
+		# box_pose.pose.orientation.w = 1.0
 
-		box_pose.pose.position.x = 0.3
-		box_pose.pose.position.y = 0
-		box_pose.pose.position.z = 0.3
+		# box_pose.pose.position.x = 0.3
+		# box_pose.pose.position.y = 0
+		# box_pose.pose.position.z = 0.3
 
 		box_name = "box-0-0-0"
-		scene.add_box(box_name, box_pose, size=(0.5, 0.5, 0.5))
+		scene.addBox(box_name, 0.4,0.4,0.4, 0.3, 0.3, 0)
 
 		## END_SUB_TUTORIAL
 		# Copy local variables back to class variables. In practice, you should use the class
 		# variables directly unless you have a good reason not to.
 		self.box_name=box_name
-		return self.wait_for_state_update(box_is_known=True, timeout=timeout)
+		return 
 
 	def remove_box(self, timeout=4):
 		# Copy class variables to local variables to make the web tutorials more clear.
@@ -192,19 +194,16 @@ class MoveGroupPythonIntefaceTutorial(object):
 		## Removing Objects from the Planning Scene
 		## ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 		## We can remove the box from the world.
-		scene.remove_world_object(box_name)
-
+		# scene.remove_world_object(box_name)
+		scene.clear()
 		## **Note:** The object must be detached before we can remove it from the world
 		## END_SUB_TUTORIAL
 
 		# We wait for the planning scene to update.
-		return self.wait_for_state_update(box_is_attached=False, box_is_known=False, timeout=timeout)
+		return 
 
 	def collision_detect(self):
-		scene = self.scene
-		collisionObj = scene.get_attached_objects()
-		print "collisionObj:"
-		print collisionObj
+		pass
 
 
 def main():
