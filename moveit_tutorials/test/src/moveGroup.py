@@ -83,7 +83,7 @@ class MoveGroupPythonIntefaceTutorial(object):
 		
 		plan = group.plan(joint_goal)
 
-		
+		self.add_box()
 
 		group.execute(plan, wait=True)
 		# group.go(joint_goal, wait=True)
@@ -174,11 +174,9 @@ class MoveGroupPythonIntefaceTutorial(object):
 		# box_pose.pose.position.z = 0.3
 
 		box_name = "box-0-0-0"
-		scene.addBox(box_name, 0.4,0.4,0.4, 0.3, 0.3, 0)
+		scene.addBox(box_name, 0.4,0.4,0.4, 0, 0, 0)
+		scene.addBox("box-0-0-1", 0.4,0.4,0.4, 0, 0.2, 0)
 
-		## END_SUB_TUTORIAL
-		# Copy local variables back to class variables. In practice, you should use the class
-		# variables directly unless you have a good reason not to.
 		self.box_name=box_name
 		return 
 
@@ -189,21 +187,13 @@ class MoveGroupPythonIntefaceTutorial(object):
 		box_name = self.box_name
 		scene = self.scene
 
-		## BEGIN_SUB_TUTORIAL remove_object
-		##
-		## Removing Objects from the Planning Scene
-		## ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-		## We can remove the box from the world.
-		# scene.remove_world_object(box_name)
+		# scene.removeCollisionObject(box_name)
 		scene.clear()
-		## **Note:** The object must be detached before we can remove it from the world
-		## END_SUB_TUTORIAL
-
-		# We wait for the planning scene to update.
 		return 
 
 	def collision_detect(self):
-		pass
+		scene = self.scene
+		print scene.getKnownCollisionObjects()
 
 
 def main():
@@ -212,26 +202,26 @@ def main():
 		raw_input()
 		tutorial = MoveGroupPythonIntefaceTutorial()
 
-		print "============ Press `Enter` to execute a movement using a joint state goal ..."
+		print "============ Press `Enter` to ..."
 		raw_input()
 		tutorial.add_box()
 		tutorial.collision_detect()
 
-		print "============ Press `Enter` to execute a movement using a joint state goal ..."
+		print "============ Press `Enter` to ..."
 		raw_input()
 		tutorial.go_to_joint_state(0,0,0,0,0,0)
 
-		print "============ Press `Enter` to add a box to the planning scene ..."
-		raw_input()
+		# print "============ Press `Enter` to a..."
+		# raw_input()
 		
 		# tutorial.add_box()
 
-		print "============ Press `Enter` to execute a movement using a joint state goal ..."
+		print "============ Press `Enter` to ..."
 		raw_input()
-		tutorial.remove_box()
+		# tutorial.remove_box()
 		tutorial.go_to_joint_state(pi/2,-pi/2,0,0,pi/2,0)
 
-		print "============ Press `Enter` to remove the box from the planning scene ..."
+		print "============ Press `Enter` to ..."
 		raw_input()
 		tutorial.remove_box()
 
