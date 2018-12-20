@@ -69,4 +69,4 @@ add_subdirectory(state_display)
 add_subdirectory(interactivity)
 add_subdirectory(pick_place)
 add_subdirectory(perception_pipeline)
-add_subdirectory(test)
+

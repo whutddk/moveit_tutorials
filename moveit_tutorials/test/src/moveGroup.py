@@ -67,49 +67,63 @@ class MoveGroupPythonIntefaceTutorial(object):
 		self.eef_link = eef_link
 		self.group_names = group_names
 
-	def go_to_joint_state(self,axis0,axis1,axis2,axis3,axis4,axis5):
-		group = self.group
-		joint_goal = group.get_current_joint_values()
+	# def go_to_joint_state(self,axis0,axis1,axis2,axis3,axis4,axis5):
+	# 	group = self.group
+	# 	joint_goal = group.get_current_joint_values()
 
-		joint_goal[0] = axis0
-		joint_goal[1] = axis1
-		joint_goal[2] = axis2
-		joint_goal[3] = axis3
-		joint_goal[4] = axis4
-		joint_goal[5] = axis5
+	# 	joint_goal[0] = axis0
+	# 	joint_goal[1] = axis1
+	# 	joint_goal[2] = axis2
+	# 	joint_goal[3] = axis3
+	# 	joint_goal[4] = axis4
+	# 	joint_goal[5] = axis5
 
-		# The go command can be called with joint values, poses, or without any
-		# parameters if you have already set the pose or joint target for the group
+	# 	# The go command can be called with joint values, poses, or without any
+	# 	# parameters if you have already set the pose or joint target for the group
 		
-		plan = group.plan(joint_goal)
+	# 	plan = group.plan(joint_goal)
 
-		self.add_box()
+	# 	self.add_box()
 
-		group.execute(plan, wait=True)
-		# group.go(joint_goal, wait=True)
+	# 	group.execute(plan, wait=True)
+	# 	# group.go(joint_goal, wait=True)
 
-		# Calling ``stop()`` ensures that there is no residual movement
-		group.stop()
+	# 	# Calling ``stop()`` ensures that there is no residual movement
+	# 	group.stop()
 
-		# For testing:
-		# Note that since this section of code will not be included in the tutorials
-		# we use the class variable rather than the copied state variable
-		current_joints = self.group.get_current_joint_values()
-		return all_close(joint_goal, current_joints, 0.01)
+	# 	# For testing:
+	# 	# Note that since this section of code will not be included in the tutorials
+	# 	# we use the class variable rather than the copied state variable
+	# 	current_joints = self.group.get_current_joint_values()
+	# 	return all_close(joint_goal, current_joints, 0.01)
 
-	#def go_to_pose_goal(self):
-		# group = self.group
-		# pose_goal = geometry_msgs.msg.Pose()
-		# pose_goal.orientation.w = 1.0
+	def go_to_pose_goal(self):
+		group = self.group
+		pose_goal = geometry_msgs.msg.Pose()
+		# pose_goal.orientation.w = 0
 		# pose_goal.position.x = 0.4
 		# pose_goal.position.y = 0.1
-		# pose_goal.position.z = 0.4
-		# group.set_pose_target(pose_goal)
-		# plan = group.go(wait=True)
-		# group.stop()
-		# group.clear_pose_targets()
-		# current_pose = self.group.get_current_pose().pose
-		# return all_close(pose_goal, current_pose, 0.01)
+		# pose_goal.position.z = 0.5
+
+# 30,0  0.006920479849202481, -1.4168282547269249, 0.19528507604150314, -0.0014828156277848174, 1.2226293225188158, -1.5612366430311047
+# 0,-30 0.006920479849202481, -1.4168282547269249, 0.19528507604150314, -0.0014828156277848174, 1.2226293225188158, -1.5612366430311047
+# 0,30 0.006920479849202481, -1.4168282547269249, 0.19528507604150314, -0.0014828156277848174, 1.2226293225188158, -1.5612366430311047
+# 20,20 0.006920479849202481, -1.4168282547269249, 0.19528507604150314, -0.0014828156277848174, 1.2226293225188158, -1.5612366430311047
+# 20,-20 0.006920479849202481, -1.4168282547269249, 0.19528507604150314, -0.0014828156277848174, 1.2226293225188158, -1.5612366430311047
+
+#[[0.006920479849202481, -1.4168282547269249, 0.19528507604150314, -0.0014828156277848174, 1.2226293225188158, -1.5612366430311047],
+#[-1.5642215079822661, -1.4167479695849718, 0.19521200511823486, -3.1375463116680358, 1.9194469288250684, 0.003616422068053552],
+#[0.006920479849202481, -1.4168282547269249, 0.19528507604150314, -0.0014828156277848174, 1.2226293225188158, -1.5612366430311047],
+#[0.7925604657573069, -1.3934528971118536, 0.096774477166693, -0.0016602744513420455, 1.2965695283317518, -0.7761344541317116],
+#[-0.7783294174380526, -1.393456789796396, 0.09674069314070417, 0.004252447813768214, 1.296659607990569, -2.352237617423516]
+		group.set_pose_target([0.2,-0.2,0.05,1.57,0,1.57])
+		plan = group.go(wait=True)
+		group.stop()
+		group.clear_pose_targets()
+		current_pose = self.group.get_current_pose().pose
+		joint_goal = group.get_current_joint_values()
+		print joint_goal
+		return all_close(pose_goal, current_pose, 0.01)
 
 	# def wait_for_state_update(self, box_is_known=False, box_is_attached=False, timeout=4):
 	# 	# Copy class variables to local variables to make the web tutorials more clear.
@@ -153,43 +167,43 @@ class MoveGroupPythonIntefaceTutorial(object):
 	# 	return False
 	# 	## END_SUB_TUTORIAL
 
-	def add_box(self, timeout=4):
-		# Copy class variables to local variables to make the web tutorials more clear.
-		# In practice, you should use the class variables directly unless you have a good
-		# reason not to.
-		box_name = self.box_name
-		scene = self.scene
+	# def add_box(self, timeout=4):
+	# 	# Copy class variables to local variables to make the web tutorials more clear.
+	# 	# In practice, you should use the class variables directly unless you have a good
+	# 	# reason not to.
+	# 	box_name = self.box_name
+	# 	scene = self.scene
 
-		## BEGIN_SUB_TUTORIAL add_box
-		##
-		## Adding Objects to the Planning Scene
-		## ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-		## First, we will create a box in the planning scene at the location of the left finger:
-		# box_pose = geometry_msgs.msg.PoseStamped()
-		# box_pose.header.frame_id = "base_footprint"
-		# box_pose.pose.orientation.w = 1.0
+	# 	## BEGIN_SUB_TUTORIAL add_box
+	# 	##
+	# 	## Adding Objects to the Planning Scene
+	# 	## ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+	# 	## First, we will create a box in the planning scene at the location of the left finger:
+	# 	# box_pose = geometry_msgs.msg.PoseStamped()
+	# 	# box_pose.header.frame_id = "base_footprint"
+	# 	# box_pose.pose.orientation.w = 1.0
 
-		# box_pose.pose.position.x = 0.3
-		# box_pose.pose.position.y = 0
-		# box_pose.pose.position.z = 0.3
+	# 	# box_pose.pose.position.x = 0.3
+	# 	# box_pose.pose.position.y = 0
+	# 	# box_pose.pose.position.z = 0.3
 
-		box_name = "box-0-0-0"
-		scene.addBox(box_name, 0.4,0.4,0.4, 0, 0, 0)
-		scene.addBox("box-0-0-1", 0.4,0.4,0.4, 0, 0.2, 0)
+	# 	box_name = "box-0-0-0"
+	# 	scene.addBox(box_name, 0.4,0.4,0.4, 0, 0, 0)
+	# 	scene.addBox("box-0-0-1", 0.4,0.4,0.4, 0, 0.2, 0)
 
-		self.box_name=box_name
-		return 
+	# 	self.box_name=box_name
+	# 	return 
 
-	def remove_box(self, timeout=4):
-		# Copy class variables to local variables to make the web tutorials more clear.
-		# In practice, you should use the class variables directly unless you have a good
-		# reason not to.
-		box_name = self.box_name
-		scene = self.scene
+	# def remove_box(self, timeout=4):
+	# 	# Copy class variables to local variables to make the web tutorials more clear.
+	# 	# In practice, you should use the class variables directly unless you have a good
+	# 	# reason not to.
+	# 	box_name = self.box_name
+	# 	scene = self.scene
 
-		# scene.removeCollisionObject(box_name)
-		scene.clear()
-		return 
+	# 	# scene.removeCollisionObject(box_name)
+	# 	scene.clear()
+	# 	return 
 
 	def collision_detect(self):
 		scene = self.scene
@@ -198,32 +212,32 @@ class MoveGroupPythonIntefaceTutorial(object):
 
 def main():
 	try:
-		print "============ Press `Enter` to begin the tutorial by setting up the moveit_commander (press ctrl-d to exit) ..."
-		raw_input()
+		# print "============ Press `Enter` to begin the tutorial by setting up the moveit_commander (press ctrl-d to exit) ..."
+		# raw_input()
 		tutorial = MoveGroupPythonIntefaceTutorial()
 
-		print "============ Press `Enter` to ..."
-		raw_input()
-		tutorial.add_box()
-		tutorial.collision_detect()
+		# print "============ Press `Enter` to ..."
+		# raw_input()
+		# tutorial.add_box()
+		# tutorial.collision_detect()
 
 		print "============ Press `Enter` to ..."
 		raw_input()
-		tutorial.go_to_joint_state(0,0,0,0,0,0)
+		tutorial.go_to_pose_goal()
 
 		# print "============ Press `Enter` to a..."
 		# raw_input()
 		
 		# tutorial.add_box()
 
-		print "============ Press `Enter` to ..."
-		raw_input()
-		# tutorial.remove_box()
-		tutorial.go_to_joint_state(pi/2,-pi/2,0,0,pi/2,0)
+		# print "============ Press `Enter` to ..."
+		# raw_input()
+		# # tutorial.remove_box()
+		# tutorial.go_to_joint_state(pi/2,-pi/2,0,0,pi/2,0)
 
-		print "============ Press `Enter` to ..."
-		raw_input()
-		tutorial.remove_box()
+		# print "============ Press `Enter` to ..."
+		# raw_input()
+		# tutorial.remove_box()
 
 		print "============ Python tutorial demo complete!"
 	except rospy.ROSInterruptException:
