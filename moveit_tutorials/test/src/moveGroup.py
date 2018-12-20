@@ -116,13 +116,21 @@ class MoveGroupPythonIntefaceTutorial(object):
 #[0.006920479849202481, -1.4168282547269249, 0.19528507604150314, -0.0014828156277848174, 1.2226293225188158, -1.5612366430311047],
 #[0.7925604657573069, -1.3934528971118536, 0.096774477166693, -0.0016602744513420455, 1.2965695283317518, -0.7761344541317116],
 #[-0.7783294174380526, -1.393456789796396, 0.09674069314070417, 0.004252447813768214, 1.296659607990569, -2.352237617423516]
-		group.set_pose_target([0.2,-0.2,0.05,1.57,0,1.57])
+		# get_random_pose
+		randomPose = group.get_random_pose()
+		group.set_pose_target(randomPose)
+		# group.set_pose_target([0.2,-0.2,0.05,1.57,0,1.57])
 		plan = group.go(wait=True)
 		group.stop()
 		group.clear_pose_targets()
-		current_pose = self.group.get_current_pose().pose
+		current_pose = self.group.get_current_pose()
 		joint_goal = group.get_current_joint_values()
+
+
+		print current_pose
 		print joint_goal
+
+		current_pose = current_pose.pose
 		return all_close(pose_goal, current_pose, 0.01)
 
 	# def wait_for_state_update(self, box_is_known=False, box_is_attached=False, timeout=4):
