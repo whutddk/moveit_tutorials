@@ -10,6 +10,9 @@
 
 #include <moveit_visual_tools/moveit_visual_tools.h>
 
+#include <iostream>
+
+
 int main(int argc, char** argv)
 {
 	ros::init(argc, argv, "move_group_interface_tutorial");
@@ -80,38 +83,74 @@ int main(int argc, char** argv)
     moveit::planning_interface::PlanningSceneInterface current_scene;
 
     // 声明一个障碍物的实例，并且为其设置一个id，方便对其进行操作，该实例会发布到当前的情景实例中
-    moveit_msgs::CollisionObject box;
-    box.id = "box0";
-    // 设置障碍物的外形、尺寸等属性   
-    shape_msgs::SolidPrimitive primitive;
-    primitive.type = primitive.BOX;
-    primitive.dimensions.resize(3);
-    primitive.dimensions[0] = 0.1;
-    primitive.dimensions[1] = 0.1;
-    primitive.dimensions[2] = 0.1;
-    // 设置障碍物的位置
-    geometry_msgs::Pose pose;
-    pose.orientation.w = 1.0;
-    pose.position.x =  0.0;
-    pose.position.y = -0.4;
-    pose.position.z =  0.4;
-    // 将障碍物的属性、位置加入到障碍物的实例中
-    box.primitives.push_back(primitive);
-    box.primitive_poses.push_back(pose);
-    box.operation = box.ADD;
-    // 创建一个障碍物的列表，把之前创建的障碍物实例加入其中
-    std::vector<moveit_msgs::CollisionObject> collision_objects;
-    collision_objects.push_back(box);
+    // moveit_msgs::CollisionObject box;
+    // box.id = "box0";
+    // // 设置障碍物的外形、尺寸等属性   
+    // shape_msgs::SolidPrimitive primitive;
+    // primitive.type = primitive.BOX;
+    // primitive.dimensions.resize(3);
+    // primitive.dimensions[0] = 0.1;
+    // primitive.dimensions[1] = 0.1;
+    // primitive.dimensions[2] = 0.1;
+    // // 设置障碍物的位置
+    // geometry_msgs::Pose pose;
+    // pose.orientation.w = 1.0;
+    // pose.position.x =  0.0;
+    // pose.position.y = -0.4;
+    // pose.position.z =  0.4;
+    // // 将障碍物的属性、位置加入到障碍物的实例中
+    // box.primitives.push_back(primitive);
+    // box.primitive_poses.push_back(pose);
+    // box.operation = box.ADD;
+    // // 创建一个障碍物的列表，把之前创建的障碍物实例加入其中
+    // std::vector<moveit_msgs::CollisionObject> collision_objects;
+    // collision_objects.push_back(box);
     
 
 
 
     // 所有障碍物加入列表后（这里只有一个障碍物），再把障碍物加入到当前的情景中，如果要删除障碍物，使用removeCollisionObjects(collision_objects)
     
-    current_scene.addCollisionObjects(collision_objects);
+    // current_scene.addCollisionObjects(collision_objects);
 
 
+	{
+		geometry_msgs::PoseStamped target_pose1;
+		// target_pose1.orientation.w = 1.0;
+		// target_pose1.position.x = 0.28;
+		// target_pose1.position.y = 0.2;
+		// target_pose1.position.z = 0.5;
+		target_pose1 = move_group.getRandomPose();
+		std::cout << "RandomPose:" << target_pose1.pose;
+		move_group.setPoseTarget(target_pose1);
 
+		// Now, we call the planner to compute the plan and visualize it.
+		// Note that we are just planning, not asking move_group
+		// to actually move the robot.
+
+
+		success = (move_group.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+
+		ROS_INFO_NAMED("tutorial", "Visualizing plan 1 (pose goal) %s", success ? "" : "FAILED");
+		std::vector< double > JointValues = move_group.getCurrentJointValues();
+		// std::vector< double > moveit::planning_interface::MoveGroupInterface::getCurrentJointValue
+		std::cout << "joint" << JointValues[0];
+		std::cout << "joint" << JointValues[1];
+		std::cout << "joint" << JointValues[2];
+		std::cout << "joint" << JointValues[3];
+		std::cout << "joint" << JointValues[4];
+		std::cout << "joint" << JointValues[5];
+
+		// Visualizing plans
+		// ^^^^^^^^^^^^^^^^^
+		// We can also visualize the plan as a line with markers in RViz.
+		// ROS_INFO_NAMED("tutorial", "Visualizing plan 1 as trajectory line");
+		// visual_tools.publishAxisLabeled(target_pose1, "pose1");
+		// visual_tools.publishText(text_pose, "Pose Goal", rvt::WHITE, rvt::XLARGE);
+		// visual_tools.publishTrajectoryLine(my_plan.trajectory_, joint_model_group);
+		visual_tools.trigger();
+		visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue the demo");
+	}
 
 
 

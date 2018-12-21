@@ -120,15 +120,20 @@ class MoveGroupPythonIntefaceTutorial(object):
 		randomPose = group.get_random_pose()
 		group.set_pose_target(randomPose)
 		# group.set_pose_target([0.2,-0.2,0.05,1.57,0,1.57])
+
 		plan = group.go(wait=True)
+
+		print "plan:"
+		print plan
+
 		group.stop()
 		group.clear_pose_targets()
 		current_pose = self.group.get_current_pose()
 		joint_goal = group.get_current_joint_values()
 
 
-		print current_pose
-		print joint_goal
+		# print current_pose
+		# print joint_goal
 
 		current_pose = current_pose.pose
 		return all_close(pose_goal, current_pose, 0.01)
