@@ -10,7 +10,10 @@ from math import pi
 from std_msgs.msg import String
 from moveit_commander.conversions import pose_to_list
 
+import json
 import moveit_python
+
+pi = 3.14159265
 
 def all_close(goal, actual, tolerance):
 	"""
@@ -67,73 +70,72 @@ class MoveGroupPythonIntefaceTutorial(object):
 		self.eef_link = eef_link
 		self.group_names = group_names
 
-	# def go_to_joint_state(self,axis0,axis1,axis2,axis3,axis4,axis5):
-	# 	group = self.group
-	# 	joint_goal = group.get_current_joint_values()
+		self.poseList = []
+		self.jointList = []
+		self.poseCnt = 0;
 
-	# 	joint_goal[0] = axis0
-	# 	joint_goal[1] = axis1
-	# 	joint_goal[2] = axis2
-	# 	joint_goal[3] = axis3
-	# 	joint_goal[4] = axis4
-	# 	joint_goal[5] = axis5
 
-	# 	# The go command can be called with joint values, poses, or without any
-	# 	# parameters if you have already set the pose or joint target for the group
-		
-	# 	plan = group.plan(joint_goal)
+	def reset_to_zero_state(self):
+		group = self.group
+		joint_goal = group.get_current_joint_values()
 
-	# 	self.add_box()
+		joint_goal[0] = 0
+		joint_goal[1] = 0
+		joint_goal[2] = 0
+		joint_goal[3] = 0
+		joint_goal[4] = 0
+		joint_goal[5] = 0
 
-	# 	group.execute(plan, wait=True)
-	# 	# group.go(joint_goal, wait=True)
+		# plan = group.plan(joint_goal)
+		# group.execute(plan, wait=True)
+		plan = group.go(joint_goal, wait=True)
 
-	# 	# Calling ``stop()`` ensures that there is no residual movement
-	# 	group.stop()
+		# Calling ``stop()`` ensures that there is no residual movement
+		group.stop()
 
-	# 	# For testing:
-	# 	# Note that since this section of code will not be included in the tutorials
-	# 	# we use the class variable rather than the copied state variable
-	# 	current_joints = self.group.get_current_joint_values()
-	# 	return all_close(joint_goal, current_joints, 0.01)
+		if (plan == False):
+			sys.exit(-1)
+		current_joints = self.group.get_current_joint_values()
+		return all_close(joint_goal, current_joints, 0.01)
 
-	def go_to_pose_goal(self):
+
+	def go_to_random_goal(self):
 		group = self.group
 		pose_goal = geometry_msgs.msg.Pose()
-		# pose_goal.orientation.w = 0
-		# pose_goal.position.x = 0.4
-		# pose_goal.position.y = 0.1
-		# pose_goal.position.z = 0.5
 
-# 30,0  0.006920479849202481, -1.4168282547269249, 0.19528507604150314, -0.0014828156277848174, 1.2226293225188158, -1.5612366430311047
-# 0,-30 0.006920479849202481, -1.4168282547269249, 0.19528507604150314, -0.0014828156277848174, 1.2226293225188158, -1.5612366430311047
-# 0,30 0.006920479849202481, -1.4168282547269249, 0.19528507604150314, -0.0014828156277848174, 1.2226293225188158, -1.5612366430311047
-# 20,20 0.006920479849202481, -1.4168282547269249, 0.19528507604150314, -0.0014828156277848174, 1.2226293225188158, -1.5612366430311047
-# 20,-20 0.006920479849202481, -1.4168282547269249, 0.19528507604150314, -0.0014828156277848174, 1.2226293225188158, -1.5612366430311047
-
-#[[0.006920479849202481, -1.4168282547269249, 0.19528507604150314, -0.0014828156277848174, 1.2226293225188158, -1.5612366430311047],
-#[-1.5642215079822661, -1.4167479695849718, 0.19521200511823486, -3.1375463116680358, 1.9194469288250684, 0.003616422068053552],
-#[0.006920479849202481, -1.4168282547269249, 0.19528507604150314, -0.0014828156277848174, 1.2226293225188158, -1.5612366430311047],
-#[0.7925604657573069, -1.3934528971118536, 0.096774477166693, -0.0016602744513420455, 1.2965695283317518, -0.7761344541317116],
-#[-0.7783294174380526, -1.393456789796396, 0.09674069314070417, 0.004252447813768214, 1.296659607990569, -2.352237617423516]
 		# get_random_pose
+
 		randomPose = group.get_random_pose()
 		group.set_pose_target(randomPose)
 		# group.set_pose_target([0.2,-0.2,0.05,1.57,0,1.57])
-
 		plan = group.go(wait=True)
 
-		print "plan:"
 		print plan
-
 		group.stop()
 		group.clear_pose_targets()
+
 		current_pose = self.group.get_current_pose()
 		joint_goal = group.get_current_joint_values()
 
+		if ( plan ):
+			
 
-		# print current_pose
-		# print joint_goal
+			if ( (joint_goal[0] < pi) and (joint_goal[0] > -pi) 
+				and (joint_goal[1] < pi*115/180) and (joint_goal[1] > -pi*115/180) 
+				and (joint_goal[2] < pi*220/180) and (joint_goal[2] > -pi*40/180)
+				and (joint_goal[3] < pi) and (joint_goal[3] > -pi)
+				and (joint_goal[4] < pi*225/180) and (joint_goal[4] > -pi*45/180)
+				and (joint_goal[5] < pi) and (joint_goal[5] > -pi)
+				and current_pose.pose.position.z > 0):
+
+				poseList = [current_pose.pose.position.x,current_pose.pose.position.y,current_pose.pose.position.z,current_pose.pose.orientation.x,current_pose.pose.orientation.y,current_pose.pose.orientation.z,current_pose.pose.orientation.w]
+				print poseList
+				print joint_goal
+				self.poseList.append(poseList)
+				self.jointList.append(joint_goal)
+				self.poseCnt = self.poseCnt + 1;
+				print self.poseCnt
+
 
 		current_pose = current_pose.pose
 		return all_close(pose_goal, current_pose, 0.01)
@@ -234,9 +236,12 @@ def main():
 		# tutorial.add_box()
 		# tutorial.collision_detect()
 
-		print "============ Press `Enter` to ..."
-		raw_input()
-		tutorial.go_to_pose_goal()
+		# print "============ Press `Enter` to ..."
+		# raw_input()
+
+		while( tutorial.poseCnt < 448 ):
+			tutorial.reset_to_zero_state()
+			tutorial.go_to_random_goal()
 
 		# print "============ Press `Enter` to a..."
 		# raw_input()
@@ -251,6 +256,17 @@ def main():
 		# print "============ Press `Enter` to ..."
 		# raw_input()
 		# tutorial.remove_box()
+		print tutorial.poseList
+		print tutorial.jointList
+		with open('./poseList.josn','w') as poseFile:
+			
+			data = json.dumps(tutorial.poseList)
+			poseFile.write(data)
+
+		with open('./jointList.josn','w') as jointFile:
+			
+			data = json.dumps(tutorial.jointList)
+			jointFile.write(data)
 
 		print "============ Python tutorial demo complete!"
 	except rospy.ROSInterruptException:
