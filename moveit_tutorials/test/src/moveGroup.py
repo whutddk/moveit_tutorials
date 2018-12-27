@@ -84,6 +84,29 @@ class MoveGroupPythonIntefaceTutorial(object):
 		self.group_names = group_names
 
 
+	def go_to_mid_state(self):
+		group = self.group
+		joint_goal = group.get_current_joint_values()
+
+		joint_goal[0] = 0
+		joint_goal[1] = 0
+		joint_goal[2] = pi/2
+		joint_goal[3] = 0
+		joint_goal[4] = 0
+		joint_goal[5] = 0
+
+		# plan = group.plan(joint_goal)
+		# group.execute(plan, wait=True)
+		plan = group.go(joint_goal, wait=True)
+
+		# Calling ``stop()`` ensures that there is no residual movement
+		group.stop()
+
+		if (plan == False):
+			sys.exit(-1)
+		current_joints = self.group.get_current_joint_values()
+		return all_close(joint_goal, current_joints, 0.01)
+
 
 
 	def reset_to_zero_state(self):
@@ -147,9 +170,6 @@ class MoveGroupPythonIntefaceTutorial(object):
 				poseList.append(poseListTemp)
 				jointList.append(joint_goal)
 				
-				
-
-
 		current_pose = current_pose.pose
 		all_close(pose_goal, current_pose, 0.01)
 
@@ -229,7 +249,7 @@ def save_edgeIndex():
 		edgeIndexFile.write(data)
 
 def edge_constraint():
-	global poseList
+	global jointList
 	global edgeIndex
 	global edgeNum
 
@@ -237,17 +257,17 @@ def edge_constraint():
 
 	for preIndex in range(0,newIndex):
 	# for prePose in poseList:
-		if ( ( abs(poseList[preIndex][0] - poseList[newIndex][0]) < (0.417 / 180 * pi) ) and
-			( abs(poseList[preIndex][1] - poseList[newIndex][1]) < (0.183 / 180 * pi) ) and
-			( abs(poseList[preIndex][2] - poseList[newIndex][2]) < (0.25 / 180 * pi) ) and
-			( abs(poseList[preIndex][3] - poseList[newIndex][3]) < (0.2 / 180 * pi) ) and
-			( abs(poseList[preIndex][4] - poseList[newIndex][4]) < (0.2 / 180 * pi) ) and
-			( abs(poseList[preIndex][5] - poseList[newIndex][5]) < (0.543 / 180 * pi) ) ):
+		if ( ( abs(jointList[preIndex][0] - jointList[newIndex][0]) < (0.417 / 180 * pi) ) and
+			( abs(jointList[preIndex][1] - jointList[newIndex][1]) < (0.183 / 180 * pi) ) and
+			( abs(jointList[preIndex][2] - jointList[newIndex][2]) < (0.25 / 180 * pi) ) and
+			( abs(jointList[preIndex][3] - jointList[newIndex][3]) < (0.2 / 180 * pi) ) and
+			( abs(jointList[preIndex][4] - jointList[newIndex][4]) < (0.2 / 180 * pi) ) and
+			( abs(jointList[preIndex][5] - jointList[newIndex][5]) < (0.543 / 180 * pi) ) ):
 			edgeIndex.append([preIndex,newIndex])
 			edgeNum = edgeNum + 1
 
 			print edgeNum
-			print len(poseList)
+			print len(jointList)
 
 
 
@@ -266,6 +286,7 @@ def main():
 	tutorial = MoveGroupPythonIntefaceTutorial()
 	tutorial.reset_to_zero_state()
 
+	tutorial.go_to_mid_state()
 	current_pose = tutorial.group.get_current_pose()
 	print "current Pose"
 	print current_pose
@@ -278,6 +299,8 @@ def main():
 	
 	poseList.append(poseListTemp)
 	jointList.append(joint_goal)
+
+
 
 	tutorial.reset_to_zero_state()
 	tutorial.go_to_pose_goal(0.18,0.15,0.06)
@@ -300,15 +323,18 @@ def main():
 	tutorial.reset_to_zero_state()
 	tutorial.go_to_pose_goal(0.34,-0.15,0.06)
 
+	save_jointList()
+	save_poseList()
 
 	edgeNum = len(edgeIndex)
+	print edgeNum
 
 	while( edgeNum < 100000 ):
 		tutorial.reset_to_zero_state()
 		if ( True == tutorial.go_to_random_goal()):
 			edge_constraint()
 			save_edgeIndex()
-			
+
 		save_jointList()
 		save_poseList()
 
