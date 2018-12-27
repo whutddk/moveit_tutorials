@@ -141,7 +141,10 @@ class MoveGroupPythonIntefaceTutorial(object):
 
 		randomPose = group.get_random_pose()
 		group.set_pose_target(randomPose)
-		# group.set_pose_target([0.2,-0.2,0.05,1.57,0,1.57])
+
+		if ( randomPose.pose.position.z < 0.55 or current_pose.pose.position.x < 0):
+			return False
+
 		plan = group.go(wait=True)
 
 		# print plan
@@ -159,8 +162,7 @@ class MoveGroupPythonIntefaceTutorial(object):
 				and (joint_goal[2] < pi*220/180) and (joint_goal[2] > -pi*40/180)
 				and (joint_goal[3] < pi) and (joint_goal[3] > -pi)
 				and (joint_goal[4] < pi*225/180) and (joint_goal[4] > -pi*45/180)
-				and (joint_goal[5] < pi) and (joint_goal[5] > -pi)
-				and current_pose.pose.position.z > 0.55):
+				and (joint_goal[5] < pi) and (joint_goal[5] > -pi)  ):
 
 				poseListTemp = [current_pose.pose.position.x,current_pose.pose.position.y,current_pose.pose.position.z,current_pose.pose.orientation.x,current_pose.pose.orientation.y,current_pose.pose.orientation.z,current_pose.pose.orientation.w]
 				
@@ -169,9 +171,11 @@ class MoveGroupPythonIntefaceTutorial(object):
 
 				poseList.append(poseListTemp)
 				jointList.append(joint_goal)
-				
-		current_pose = current_pose.pose
-		all_close(pose_goal, current_pose, 0.01)
+
+
+			else:
+				plan = False
+		
 
 		return plan
 
@@ -266,7 +270,7 @@ def edge_constraint():
 			edge = [preIndex,newIndex]
 			edgeIndex.append(edge)
 			edgeNum = edgeNum + 1
-
+			save_edgeIndex()
 			print edge
 			print len(jointList)
 
@@ -334,7 +338,7 @@ def main():
 		tutorial.reset_to_zero_state()
 		if ( True == tutorial.go_to_random_goal()):
 			edge_constraint()
-			save_edgeIndex()
+			
 
 		save_jointList()
 		save_poseList()
