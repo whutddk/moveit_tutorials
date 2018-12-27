@@ -142,7 +142,7 @@ class MoveGroupPythonIntefaceTutorial(object):
 		randomPose = group.get_random_pose()
 		group.set_pose_target(randomPose)
 
-		if ( randomPose.pose.position.z < 0.55 or current_pose.pose.position.x < 0):
+		if ( randomPose.pose.position.z < 0.55 or randomPose.pose.position.x < 0):
 			return False
 
 		plan = group.go(wait=True)
@@ -257,16 +257,16 @@ def edge_constraint():
 	global edgeIndex
 	global edgeNum
 
-	newIndex = len(poseList) - 1
+	newIndex = len(jointList) - 1
 
 	for preIndex in range(0,newIndex):
 	# for prePose in poseList:
-		if ( ( abs(jointList[preIndex][0] - jointList[newIndex][0]) < (0.417 / 180 * pi) ) and
-			( abs(jointList[preIndex][1] - jointList[newIndex][1]) < (0.183 / 180 * pi) ) and
-			( abs(jointList[preIndex][2] - jointList[newIndex][2]) < (0.25 / 180 * pi) ) and
-			( abs(jointList[preIndex][3] - jointList[newIndex][3]) < (0.2 / 180 * pi) ) and
-			( abs(jointList[preIndex][4] - jointList[newIndex][4]) < (0.2 / 180 * pi) ) and
-			( abs(jointList[preIndex][5] - jointList[newIndex][5]) < (0.543 / 180 * pi) ) ):
+		if ( ( abs(jointList[preIndex][0] - jointList[newIndex][0]) < (0.417 / 180 * pi * 30) ) and
+			( abs(jointList[preIndex][1] - jointList[newIndex][1]) < (0.183 / 180 * pi * 30) ) and
+			( abs(jointList[preIndex][2] - jointList[newIndex][2]) < (0.25 / 180 * pi * 30) ) and
+			( abs(jointList[preIndex][3] - jointList[newIndex][3]) < (0.2 / 180 * pi * 30) ) and
+			( abs(jointList[preIndex][4] - jointList[newIndex][4]) < (0.2 / 180 * pi * 30) ) and
+			( abs(jointList[preIndex][5] - jointList[newIndex][5]) < (0.543 / 180 * pi * 30) ) ):
 			edge = [preIndex,newIndex]
 			edgeIndex.append(edge)
 			edgeNum = edgeNum + 1
