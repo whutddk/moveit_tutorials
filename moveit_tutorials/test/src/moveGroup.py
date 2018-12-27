@@ -188,7 +188,7 @@ def load_poseList():
 		data = poseListFile.read()
 		poseList = json.loads(data)
 
-def save_pose():
+def save_poseList():
 	global poseList
 	with open('./poseList.json','w') as poseListFile:
 		
@@ -259,9 +259,9 @@ def main():
 	global edgeNum
 
 
-	load_pose()
+	load_poseList()
+	load_jointList()
 	load_edgeIndex()
-
 	
 	tutorial = MoveGroupPythonIntefaceTutorial()
 	tutorial.reset_to_zero_state()
@@ -307,7 +307,10 @@ def main():
 		tutorial.reset_to_zero_state()
 		if ( True == tutorial.go_to_random_goal()):
 			edge_constraint()
-
+			save_edgeIndex()
+			
+		save_jointList()
+		save_poseList()
 
 
 	print poseList
