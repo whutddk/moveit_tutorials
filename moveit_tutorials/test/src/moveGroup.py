@@ -160,7 +160,7 @@ class MoveGroupPythonIntefaceTutorial(object):
 				and (joint_goal[3] < pi) and (joint_goal[3] > -pi)
 				and (joint_goal[4] < pi*225/180) and (joint_goal[4] > -pi*45/180)
 				and (joint_goal[5] < pi) and (joint_goal[5] > -pi)
-				and current_pose.pose.position.z > 0.6):
+				and current_pose.pose.position.z > 0.55):
 
 				poseListTemp = [current_pose.pose.position.x,current_pose.pose.position.y,current_pose.pose.position.z,current_pose.pose.orientation.x,current_pose.pose.orientation.y,current_pose.pose.orientation.z,current_pose.pose.orientation.w]
 				
@@ -285,47 +285,47 @@ def main():
 	load_edgeIndex()
 	
 	tutorial = MoveGroupPythonIntefaceTutorial()
-	tutorial.reset_to_zero_state()
+	# tutorial.reset_to_zero_state()
 
-	tutorial.go_to_mid_state()
-	current_pose = tutorial.group.get_current_pose()
-	print "current Pose"
-	print current_pose
+	# tutorial.go_to_mid_state()
+	# current_pose = tutorial.group.get_current_pose()
+	# print "current Pose"
+	# print current_pose
 
-	joint_goal = tutorial.group.get_current_joint_values()
-	print "current Joint"
-	print joint_goal
+	# joint_goal = tutorial.group.get_current_joint_values()
+	# print "current Joint"
+	# print joint_goal
 
-	poseListTemp = [current_pose.pose.position.x,current_pose.pose.position.y,current_pose.pose.position.z,current_pose.pose.orientation.x,current_pose.pose.orientation.y,current_pose.pose.orientation.z,current_pose.pose.orientation.w]
+	# poseListTemp = [current_pose.pose.position.x,current_pose.pose.position.y,current_pose.pose.position.z,current_pose.pose.orientation.x,current_pose.pose.orientation.y,current_pose.pose.orientation.z,current_pose.pose.orientation.w]
 	
-	poseList.append(poseListTemp)
-	jointList.append(joint_goal)
+	# poseList.append(poseListTemp)
+	# jointList.append(joint_goal)
 
 
 
-	tutorial.reset_to_zero_state()
-	tutorial.go_to_pose_goal(0.18,0.15,0.06)
-	tutorial.reset_to_zero_state()
-	tutorial.go_to_pose_goal(0.18,0.0,0.06)
-	tutorial.reset_to_zero_state()
-	tutorial.go_to_pose_goal(0.18,-0.15,0.06)
+	# tutorial.reset_to_zero_state()
+	# tutorial.go_to_pose_goal(0.18,0.15,0.06)
+	# tutorial.reset_to_zero_state()
+	# tutorial.go_to_pose_goal(0.18,0.0,0.06)
+	# tutorial.reset_to_zero_state()
+	# tutorial.go_to_pose_goal(0.18,-0.15,0.06)
 
-	tutorial.reset_to_zero_state()
-	tutorial.go_to_pose_goal(0.24,0.15,0.06)
-	tutorial.reset_to_zero_state()
-	tutorial.go_to_pose_goal(0.24,0.0,0.06)
-	tutorial.reset_to_zero_state()
-	tutorial.go_to_pose_goal(0.24,-0.15,0.06)
+	# tutorial.reset_to_zero_state()
+	# tutorial.go_to_pose_goal(0.24,0.15,0.06)
+	# tutorial.reset_to_zero_state()
+	# tutorial.go_to_pose_goal(0.24,0.0,0.06)
+	# tutorial.reset_to_zero_state()
+	# tutorial.go_to_pose_goal(0.24,-0.15,0.06)
 
-	tutorial.reset_to_zero_state()
-	tutorial.go_to_pose_goal(0.34,0.15,0.06)
-	tutorial.reset_to_zero_state()
-	tutorial.go_to_pose_goal(0.34,0.0,0.06)
-	tutorial.reset_to_zero_state()
-	tutorial.go_to_pose_goal(0.34,-0.15,0.06)
+	# tutorial.reset_to_zero_state()
+	# tutorial.go_to_pose_goal(0.34,0.15,0.06)
+	# tutorial.reset_to_zero_state()
+	# tutorial.go_to_pose_goal(0.34,0.0,0.06)
+	# tutorial.reset_to_zero_state()
+	# tutorial.go_to_pose_goal(0.34,-0.15,0.06)
 
-	save_jointList()
-	save_poseList()
+	# save_jointList()
+	# save_poseList()
 
 	edgeNum = len(edgeIndex)
 	print edgeNum
