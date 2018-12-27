@@ -45,8 +45,8 @@ class MoveGroupPythonIntefaceTutorial(object):
 		rospy.init_node('move_group_python_interface_tutorial',
 						anonymous=True)
 		robot = moveit_commander.RobotCommander()
-		# scene = moveit_commander.PlanningSceneInterface()
-		scene = moveit_python.planning_scene_interface.PlanningSceneInterface("base_link")
+		scene = moveit_commander.PlanningSceneInterface()
+		# scene = moveit_python.planning_scene_interface.PlanningSceneInterface("base_link")
 		group_name = "anno_arm"
 		group = moveit_commander.MoveGroupCommander(group_name)
 		display_trajectory_publisher = rospy.Publisher('/move_group/display_planned_path',
@@ -140,74 +140,104 @@ class MoveGroupPythonIntefaceTutorial(object):
 		current_pose = current_pose.pose
 		return all_close(pose_goal, current_pose, 0.01)
 
-	# def wait_for_state_update(self, box_is_known=False, box_is_attached=False, timeout=4):
-	# 	# Copy class variables to local variables to make the web tutorials more clear.
-	# 	# In practice, you should use the class variables directly unless you have a good
-	# 	# reason not to.
-	# 	box_name = self.box_name
-	# 	scene = self.scene
+	def wait_for_state_update(self, box_is_known=False, box_is_attached=False, timeout=4):
+		# Copy class variables to local variables to make the web tutorials more clear.
+		# In practice, you should use the class variables directly unless you have a good
+		# reason not to.
+		box_name = self.box_name
+		scene = self.scene
 
-	# 	## BEGIN_SUB_TUTORIAL wait_for_scene_update
-	# 	##
-	# 	## Ensuring Collision Updates Are Receieved
-	# 	## ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-	# 	## If the Python node dies before publishing a collision object update message, the message
-	# 	## could get lost and the box will not appear. To ensure that the updates are
-	# 	## made, we wait until we see the changes reflected in the
-	# 	## ``get_known_object_names()`` and ``get_known_object_names()`` lists.
-	# 	## For the purpose of this tutorial, we call this function after adding,
-	# 	## removing, attaching or detaching an object in the planning scene. We then wait
-	# 	## until the updates have been made or ``timeout`` seconds have passed
-	# 	start = rospy.get_time()
-	# 	seconds = rospy.get_time()
-	# 	while (seconds - start < timeout) and not rospy.is_shutdown():
-	# 		# Test if the box is in attached objects
-	# 		# attached_objects = scene.get_attached_objects([box_name])
-	# 		attached_objects = scene.getKnowAttachedObjects([box_name])
-	# 		is_attached = len(attached_objects.keys()) > 0
+		## BEGIN_SUB_TUTORIAL wait_for_scene_update
+		##
+		## Ensuring Collision Updates Are Receieved
+		## ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+		## If the Python node dies before publishing a collision object update message, the message
+		## could get lost and the box will not appear. To ensure that the updates are
+		## made, we wait until we see the changes reflected in the
+		## ``get_known_object_names()`` and ``get_known_object_names()`` lists.
+		## For the purpose of this tutorial, we call this function after adding,
+		## removing, attaching or detaching an object in the planning scene. We then wait
+		## until the updates have been made or ``timeout`` seconds have passed
+		start = rospy.get_time()
+		seconds = rospy.get_time()
+		while (seconds - start < timeout) and not rospy.is_shutdown():
+			# Test if the box is in attached objects
+			attached_objects = scene.get_attached_objects([box_name])
+			is_attached = len(attached_objects.keys()) > 0
 
-	# 		# Test if the box is in the scene.
-	# 		# Note that attaching the box will remove it from known_objects
-	# 		is_known = box_name in scene.get_known_object_names()
+			# Test if the box is in the scene.
+			# Note that attaching the box will remove it from known_objects
+			is_known = box_name in scene.get_known_object_names()
 
-	# 		# Test if we are in the expected state
-	# 		if (box_is_attached == is_attached) and (box_is_known == is_known):
-	# 			return True
+			# Test if we are in the expected state
+			if (box_is_attached == is_attached) and (box_is_known == is_known):
+				return True
 
-	# 		# Sleep so that we give other threads time on the processor
-	# 		rospy.sleep(0.1)
-	# 		seconds = rospy.get_time()
+			# Sleep so that we give other threads time on the processor
+			rospy.sleep(0.1)
+			seconds = rospy.get_time()
 
-	# 	# If we exited the while loop without returning then we timed out
-	# 	return False
-	# 	## END_SUB_TUTORIAL
+		# If we exited the while loop without returning then we timed out
+		return False
+	## END_SUB_TUTORIAL
 
-	# def add_box(self, timeout=4):
-	# 	# Copy class variables to local variables to make the web tutorials more clear.
-	# 	# In practice, you should use the class variables directly unless you have a good
-	# 	# reason not to.
-	# 	box_name = self.box_name
-	# 	scene = self.scene
+	def add_box(self, timeout=10):
+		# Copy class variables to local variables to make the web tutorials more clear.
+		# In practice, you should use the class variables directly unless you have a good
+		# reason not to.
+		box_name = self.box_name
+		scene = self.scene
 
-	# 	## BEGIN_SUB_TUTORIAL add_box
-	# 	##
-	# 	## Adding Objects to the Planning Scene
-	# 	## ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-	# 	## First, we will create a box in the planning scene at the location of the left finger:
-	# 	# box_pose = geometry_msgs.msg.PoseStamped()
-	# 	# box_pose.header.frame_id = "base_footprint"
-	# 	# box_pose.pose.orientation.w = 1.0
+		## BEGIN_SUB_TUTORIAL add_box
+		##
+		## Adding Objects to the Planning Scene
+		## ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+		## First, we will create a box in the planning scene at the location of the left finger:
+		box_pose = geometry_msgs.msg.PoseStamped()
+		box_pose.header.frame_id = "base_footprint"
+		box_pose.pose.orientation.w = 1.0
 
-	# 	# box_pose.pose.position.x = 0.3
-	# 	# box_pose.pose.position.y = 0
-	# 	# box_pose.pose.position.z = 0.3
+		box_pose.pose.position.x = 0.225
+		box_pose.pose.position.y = 0
+		box_pose.pose.position.z = 0.416
 
-	# 	box_name = "box-0-0-0"
-	# 	scene.addBox(box_name, 0.4,0.4,0.4, 0, 0, 0)
-	# 	scene.addBox("box-0-0-1", 0.4,0.4,0.4, 0, 0.2, 0)
+		box_name = "box"
+		scene.add_box(box_name, box_pose, size=(0.06, 0.06, 0.06))
+		# scene.addBox(box_name, 0.06,0.06,0.06, 0, 0, 0)
 
-	# 	self.box_name=box_name
-	# 	return 
+
+		self.box_name=box_name
+		return self.wait_for_state_update(box_is_known=True, timeout=timeout) 
+		
+
+	def attach_box(self, timeout=4):
+		# Copy class variables to local variables to make the web tutorials more clear.
+		# In practice, you should use the class variables directly unless you have a good
+		# reason not to.
+		box_name = self.box_name
+		robot = self.robot
+		scene = self.scene
+		eef_link = self.eef_link
+		group_names = self.group_names
+
+		## BEGIN_SUB_TUTORIAL attach_object
+		##
+		## Attaching Objects to the Robot
+		## ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+		## Next, we will attach the box to the Panda wrist. Manipulating objects requires the
+		## robot be able to touch them without the planning scene reporting the contact as a
+		## collision. By adding link names to the ``touch_links`` array, we are telling the
+		## planning scene to ignore collisions between those links and the box. For the Panda
+		## robot, we set ``grasping_group = 'hand'``. If you are using a different robot,
+		## you should change this value to the name of your end effector group name.
+		grasping_group = 'anno_arm'
+		touch_links = robot.get_link_names(group=grasping_group)
+		scene.attach_box(eef_link, box_name, touch_links=touch_links)
+		## END_SUB_TUTORIAL
+
+		# We wait for the planning scene to update.
+		return self.wait_for_state_update(box_is_attached=True, box_is_known=False, timeout=timeout)
+
 
 	# def remove_box(self, timeout=4):
 	# 	# Copy class variables to local variables to make the web tutorials more clear.
@@ -220,40 +250,41 @@ class MoveGroupPythonIntefaceTutorial(object):
 	# 	scene.clear()
 	# 	return 
 
-	def collision_detect(self):
-		scene = self.scene
-		print scene.getKnownCollisionObjects()
+	# def collision_detect(self):
+	# 	scene = self.scene
+	# 	print scene.getKnownCollisionObjects()
 
 
 def main():
-	try:
-		# print "============ Press `Enter` to begin the tutorial by setting up the moveit_commander (press ctrl-d to exit) ..."
-		# raw_input()
-		tutorial = MoveGroupPythonIntefaceTutorial()
+	# print "============ Press `Enter` to begin the tutorial by setting up the moveit_commander (press ctrl-d to exit) ..."
+	# raw_input()
+	tutorial = MoveGroupPythonIntefaceTutorial()
 
-		while( tutorial.poseCnt < 448 ):
-			tutorial.reset_to_zero_state()
-			tutorial.go_to_random_goal()
+	tutorial.add_box()
+	tutorial.reset_to_zero_state()
+
+	tutorial.attach_box()
+
+	# while( tutorial.poseCnt < 448 ):
+	tutorial.reset_to_zero_state()
+	tutorial.go_to_random_goal()
 
 
 
-		print tutorial.poseList
-		print tutorial.jointList
-		with open('./poseList.josn','w') as poseFile:
-			
-			data = json.dumps(tutorial.poseList)
-			poseFile.write(data)
+	print tutorial.poseList
+	print tutorial.jointList
+	with open('./poseList.josn','w') as poseFile:
+		
+		data = json.dumps(tutorial.poseList)
+		poseFile.write(data)
 
-		with open('./jointList.josn','w') as jointFile:
-			
-			data = json.dumps(tutorial.jointList)
-			jointFile.write(data)
+	with open('./jointList.josn','w') as jointFile:
+		
+		data = json.dumps(tutorial.jointList)
+		jointFile.write(data)
 
-		print "============ Python tutorial demo complete!"
-	except rospy.ROSInterruptException:
-		return
-	except KeyboardInterrupt:
-		return
+	print "============ Python tutorial demo complete!"
+
 
 if __name__ == '__main__':
 	main()
