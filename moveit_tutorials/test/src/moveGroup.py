@@ -128,10 +128,10 @@ class MoveGroupPythonIntefaceTutorial(object):
 				and (joint_goal[5] < pi) and (joint_goal[5] > -pi)
 				and current_pose.pose.position.z > 0):
 
-				poseList = [current_pose.pose.position.x,current_pose.pose.position.y,current_pose.pose.position.z,current_pose.pose.orientation.x,current_pose.pose.orientation.y,current_pose.pose.orientation.z,current_pose.pose.orientation.w]
+				poseListTemp = [current_pose.pose.position.x,current_pose.pose.position.y,current_pose.pose.position.z,current_pose.pose.orientation.x,current_pose.pose.orientation.y,current_pose.pose.orientation.z,current_pose.pose.orientation.w]
 				print poseList
 				print joint_goal
-				self.poseList.append(poseList)
+				self.poseList.append(poseListTemp)
 				self.jointList.append(joint_goal)
 				self.poseCnt = self.poseCnt + 1;
 				print self.poseCnt
@@ -140,19 +140,19 @@ class MoveGroupPythonIntefaceTutorial(object):
 		current_pose = current_pose.pose
 		return all_close(pose_goal, current_pose, 0.01)
 
-	def go_to_pose_goal(self):
+	def go_to_pose_goal(self,X,Y,Z):
 
 		group = self.group
 
-		pose_goal = geometry_msgs.msg.Pose()
-		pose_goal.orientation.x = 0.707105482511
-		pose_goal.orientation.y = 0
-		pose_goal.orientation.z = 0
-		pose_goal.orientation.w = 0.707105482511
-		pose_goal.position.x = 0.2
-		pose_goal.position.y = 0
-		pose_goal.position.z = 0.06
-		group.set_pose_target(pose_goal)
+		# pose_goal = geometry_msgs.msg.Pose()
+		# # pose_goal.orientation.x = 0.707105482511
+		# # pose_goal.orientation.y = 0
+		# # pose_goal.orientation.z = 0
+		# pose_goal.orientation.w = 0.707105482511
+		# pose_goal.position.x = X
+		# pose_goal.position.y = Y
+		# pose_goal.position.z = Z
+		group.set_pose_target([X,Y,Z,1.57,0,1.57])
 
 		## Now, we call the planner to compute the plan and execute it.
 		plan = group.go(wait=True)
@@ -164,14 +164,22 @@ class MoveGroupPythonIntefaceTutorial(object):
 		group.stop()
 		# It is always good to clear your targets after planning with poses.
 		# Note: there is no equivalent function for clear_joint_value_targets()
-		group.clear_pose_targets()
+		
 
+		current_pose = group.get_current_pose()
 		print "current Pose"
-		print group.get_current_pose()
+		print current_pose
 
+		joint_goal = group.get_current_joint_values()
 		print "current Joint"
-		print group.get_current_joint_values()
+		print joint_goal
 
+		poseListTemp = [current_pose.pose.position.x,current_pose.pose.position.y,current_pose.pose.position.z,current_pose.pose.orientation.x,current_pose.pose.orientation.y,current_pose.pose.orientation.z,current_pose.pose.orientation.w]
+		
+		self.poseList.append(poseListTemp)
+		self.jointList.append(joint_goal)
+
+		group.clear_pose_targets()
 
 def main():
 	# print "============ Press `Enter` to begin the tutorial by setting up the moveit_commander (press ctrl-d to exit) ..."
@@ -181,7 +189,39 @@ def main():
 	# tutorial.add_box()
 	tutorial.reset_to_zero_state()
 
-	tutorial.go_to_pose_goal()
+	current_pose = tutorial.group.get_current_pose()
+	print "current Pose"
+	print current_pose
+
+	joint_goal = tutorial.group.get_current_joint_values()
+	print "current Joint"
+	print joint_goal
+
+	poseListTemp = [current_pose.pose.position.x,current_pose.pose.position.y,current_pose.pose.position.z,current_pose.pose.orientation.x,current_pose.pose.orientation.y,current_pose.pose.orientation.z,current_pose.pose.orientation.w]
+	
+	tutorial.poseList.append(poseListTemp)
+	tutorial.jointList.append(joint_goal)
+
+	tutorial.reset_to_zero_state()
+	tutorial.go_to_pose_goal(0.18,0.15,0.06)
+	tutorial.reset_to_zero_state()
+	tutorial.go_to_pose_goal(0.18,0.0,0.06)
+	tutorial.reset_to_zero_state()
+	tutorial.go_to_pose_goal(0.18,-0.15,0.06)
+
+	tutorial.reset_to_zero_state()
+	tutorial.go_to_pose_goal(0.24,0.15,0.06)
+	tutorial.reset_to_zero_state()
+	tutorial.go_to_pose_goal(0.24,0.0,0.06)
+	tutorial.reset_to_zero_state()
+	tutorial.go_to_pose_goal(0.24,-0.15,0.06)
+
+	tutorial.reset_to_zero_state()
+	tutorial.go_to_pose_goal(0.34,0.15,0.06)
+	tutorial.reset_to_zero_state()
+	tutorial.go_to_pose_goal(0.34,0.0,0.06)
+	tutorial.reset_to_zero_state()
+	tutorial.go_to_pose_goal(0.34,-0.15,0.06)
 
 	# while( tutorial.poseCnt < 448 ):
 	# 	tutorial.reset_to_zero_state()
