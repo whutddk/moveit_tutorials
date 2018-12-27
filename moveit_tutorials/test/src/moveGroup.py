@@ -231,31 +231,12 @@ def main():
 		# raw_input()
 		tutorial = MoveGroupPythonIntefaceTutorial()
 
-		# print "============ Press `Enter` to ..."
-		# raw_input()
-		# tutorial.add_box()
-		# tutorial.collision_detect()
-
-		# print "============ Press `Enter` to ..."
-		# raw_input()
-
 		while( tutorial.poseCnt < 448 ):
 			tutorial.reset_to_zero_state()
 			tutorial.go_to_random_goal()
 
-		# print "============ Press `Enter` to a..."
-		# raw_input()
-		
-		# tutorial.add_box()
 
-		# print "============ Press `Enter` to ..."
-		# raw_input()
-		# # tutorial.remove_box()
-		# tutorial.go_to_joint_state(pi/2,-pi/2,0,0,pi/2,0)
 
-		# print "============ Press `Enter` to ..."
-		# raw_input()
-		# tutorial.remove_box()
 		print tutorial.poseList
 		print tutorial.jointList
 		with open('./poseList.josn','w') as poseFile:
