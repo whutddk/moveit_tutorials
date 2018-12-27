@@ -15,6 +15,14 @@ import moveit_python
 
 pi = 3.14159265
 
+
+
+
+edgeIndexFile = []
+poseList = []
+jointList = []
+edgeNum = 0
+
 def all_close(goal, actual, tolerance):
 	"""
 	Convenience method for testing if a list of values are within a tolerance of their counterparts in another list
@@ -39,6 +47,11 @@ def all_close(goal, actual, tolerance):
 
 class MoveGroupPythonIntefaceTutorial(object):
 	"""MoveGroupPythonIntefaceTutorial"""
+
+	global poseList
+	global jointList
+	global edgeIndex
+
 	def __init__(self):
 		super(MoveGroupPythonIntefaceTutorial, self).__init__()
 		moveit_commander.roscpp_initialize(sys.argv)
@@ -70,9 +83,7 @@ class MoveGroupPythonIntefaceTutorial(object):
 		self.eef_link = eef_link
 		self.group_names = group_names
 
-		self.poseList = []
-		self.jointList = []
-		self.poseCnt = 0;
+
 
 
 	def reset_to_zero_state(self):
@@ -129,64 +140,130 @@ class MoveGroupPythonIntefaceTutorial(object):
 				and current_pose.pose.position.z > 0):
 
 				poseListTemp = [current_pose.pose.position.x,current_pose.pose.position.y,current_pose.pose.position.z,current_pose.pose.orientation.x,current_pose.pose.orientation.y,current_pose.pose.orientation.z,current_pose.pose.orientation.w]
-				print poseList
+				
+				print poseListTemp
 				print joint_goal
-				self.poseList.append(poseListTemp)
-				self.jointList.append(joint_goal)
-				self.poseCnt = self.poseCnt + 1;
-				print self.poseCnt
+
+				poseList.append(poseListTemp)
+				jointList.append(joint_goal)
+				
+				
 
 
 		current_pose = current_pose.pose
-		return all_close(pose_goal, current_pose, 0.01)
+		all_close(pose_goal, current_pose, 0.01)
+
+		return plan
 
 	def go_to_pose_goal(self,X,Y,Z):
 
 		group = self.group
 
-		# pose_goal = geometry_msgs.msg.Pose()
-		# # pose_goal.orientation.x = 0.707105482511
-		# # pose_goal.orientation.y = 0
-		# # pose_goal.orientation.z = 0
-		# pose_goal.orientation.w = 0.707105482511
-		# pose_goal.position.x = X
-		# pose_goal.position.y = Y
-		# pose_goal.position.z = Z
 		group.set_pose_target([X,Y,Z,1.57,0,1.57])
 
 		## Now, we call the planner to compute the plan and execute it.
 		plan = group.go(wait=True)
 
-		# plan = group.plan(pose_goal)
-
-		# group.execute(plan, wait=True)
-		# Calling `stop()` ensures that there is no residual movement
 		group.stop()
-		# It is always good to clear your targets after planning with poses.
-		# Note: there is no equivalent function for clear_joint_value_targets()
-		
 
 		current_pose = group.get_current_pose()
-		print "current Pose"
-		print current_pose
 
 		joint_goal = group.get_current_joint_values()
-		print "current Joint"
-		print joint_goal
 
 		poseListTemp = [current_pose.pose.position.x,current_pose.pose.position.y,current_pose.pose.position.z,current_pose.pose.orientation.x,current_pose.pose.orientation.y,current_pose.pose.orientation.z,current_pose.pose.orientation.w]
 		
-		self.poseList.append(poseListTemp)
-		self.jointList.append(joint_goal)
+		poseList.append(poseListTemp)
+		jointList.append(joint_goal)
 
 		group.clear_pose_targets()
 
-def main():
-	# print "============ Press `Enter` to begin the tutorial by setting up the moveit_commander (press ctrl-d to exit) ..."
-	# raw_input()
-	tutorial = MoveGroupPythonIntefaceTutorial()
 
-	# tutorial.add_box()
+
+
+def load_poseList():
+	global poseList
+
+	with open('./poseList.json','r') as poseListFile:
+			
+		data = poseListFile.read()
+		poseList = json.loads(data)
+
+def save_pose():
+	global poseList
+	with open('./poseList.json','w') as poseListFile:
+		
+		data = json.dumps(poseList)
+		poseListFile.write(data)
+
+
+def load_jointList():
+	global jointList
+
+	with open('./jointList.json','r') as jointListFile:
+			
+		data = jointListFile.read()
+		jointList = json.loads(data)
+
+def save_jointList():
+	global jointList
+	with open('./jointList.json','w') as jointListFile:
+		
+		data = json.dumps(jointList)
+		jointListFile.write(data)
+
+
+
+def load_edgeIndex():
+	global edgeIndex
+
+	with open('./edgeIndex.json','r') as edgeIndexFile:
+			
+		data = edgeIndexFile.read()
+		edgeIndex = json.loads(data)	
+
+def save_edgeIndex():
+	global edgeIndex
+	with open('./edgeIndex.json','w') as edgeIndexFile:
+		
+		data = json.dumps(edgeIndex)
+		edgeIndexFile.write(data)
+
+def edge_constraint():
+	global poseList
+	global edgeIndex
+	global edgeNum
+
+	newIndex = len(poseList) - 1
+
+	for preIndex in range(0,newIndex):
+	# for prePose in poseList:
+		if ( ( abs(poseList[preIndex][0] - poseList[newIndex][0]) < (0.417 / 180 * pi) ) and
+			( abs(poseList[preIndex][1] - poseList[newIndex][1]) < (0.183 / 180 * pi) ) and
+			( abs(poseList[preIndex][2] - poseList[newIndex][2]) < (0.25 / 180 * pi) ) and
+			( abs(poseList[preIndex][3] - poseList[newIndex][3]) < (0.2 / 180 * pi) ) and
+			( abs(poseList[preIndex][4] - poseList[newIndex][4]) < (0.2 / 180 * pi) ) and
+			( abs(poseList[preIndex][5] - poseList[newIndex][5]) < (0.543 / 180 * pi) ) ):
+			edgeIndex.append([preIndex,newIndex])
+			edgeNum = edgeNum + 1
+
+			print edgeNum
+			print len(poseList)
+
+
+
+def main():
+
+	global poseList
+	global jointList
+	global edgeIndex
+	global edgeNum
+
+
+	load_pose()
+	load_edgeIndex()
+
+	
+	tutorial = MoveGroupPythonIntefaceTutorial()
 	tutorial.reset_to_zero_state()
 
 	current_pose = tutorial.group.get_current_pose()
@@ -199,8 +276,8 @@ def main():
 
 	poseListTemp = [current_pose.pose.position.x,current_pose.pose.position.y,current_pose.pose.position.z,current_pose.pose.orientation.x,current_pose.pose.orientation.y,current_pose.pose.orientation.z,current_pose.pose.orientation.w]
 	
-	tutorial.poseList.append(poseListTemp)
-	tutorial.jointList.append(joint_goal)
+	poseList.append(poseListTemp)
+	jointList.append(joint_goal)
 
 	tutorial.reset_to_zero_state()
 	tutorial.go_to_pose_goal(0.18,0.15,0.06)
@@ -223,23 +300,21 @@ def main():
 	tutorial.reset_to_zero_state()
 	tutorial.go_to_pose_goal(0.34,-0.15,0.06)
 
-	# while( tutorial.poseCnt < 448 ):
-	# 	tutorial.reset_to_zero_state()
-	# 	tutorial.go_to_random_goal()
+
+	edgeNum = len(edgeIndex)
+
+	while( edgeNum < 100000 ):
+		tutorial.reset_to_zero_state()
+		if ( True == tutorial.go_to_random_goal()):
+			edge_constraint()
 
 
 
-	print tutorial.poseList
-	print tutorial.jointList
-	with open('./poseList.josn','w') as poseFile:
-		
-		data = json.dumps(tutorial.poseList)
-		poseFile.write(data)
+	print poseList
+	print jointList
 
-	with open('./jointList.josn','w') as jointFile:
-		
-		data = json.dumps(tutorial.jointList)
-		jointFile.write(data)
+
+
 
 	print "============ Python tutorial demo complete!"
 
